@@ -5,7 +5,7 @@ The Pytorch Implementation of ''Unsupervised Underwater Image Enhancement using 
 <div align=center><img src="model_utils/fig_1.png" height = "60%" width = "60%"/></div>
 
 ## Introduction
-<div align=center><img src="model_utils/fig_8.png"  height = "60%" width = "60%"/></div>
+<div align=center><img src="model_utils/fig_8.png"></div>
 We present a fully trainable framework to enhance underwater images without ground truth. 
 We demonstrate that our proposed model outperforms ten popular underwater image enhancement methods on seven common  metrics, 
 in both paired and unpaired settings.
