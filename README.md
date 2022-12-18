@@ -1,6 +1,6 @@
 
-# Unsupervised Underwater Image Enhancement using Deep Learning with Uncertainty Distribution (UDnet) ([Paper](https://arxiv.org/))
-The Pytorch Implementation of ''Unsupervised Underwater Image Enhancement using Deep Learning with Uncertainty Distribution''. 
+# Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement (UDnet) ([Paper](https://arxiv.org/))
+The Pytorch Implementation of ''Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement''. 
 
 <div align=center><img src="model_utils/fig_1.png" height = "60%" width = "60%"/></div>
 
@@ -41,7 +41,7 @@ If you find UDnet is useful in your research, please cite our paper:
 
 
 ```
-{ Unsupervised Underwater image enhancement using Deep Learning with Uncertainty Distribution	
+{ Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement	
 https://github.com/alzayats/UDnet
 }
 ```
