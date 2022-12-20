@@ -1,5 +1,5 @@
 
-# Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement (UDnet) ([Paper](https://arxiv.org/))
+# Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement  ([Paper](https://arxiv.org/pdf/2212.08983.pdf))
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Framework](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&logo=PyTorch&logoColor=white)](https://pytorch.org/)
@@ -46,8 +46,15 @@ If you find UDnet is useful in your research, please cite our paper:
 
 
 ```
-{ Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement	
-https://github.com/alzayats/UDnet
+@article{Saleh2022udnet,
+    title = {{Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement}},
+    year = {2022},
+    author = {Saleh, Alzayat and Sheaves, Marcus and Jerry, Dean and Azghadi, Mostafa Rahimi},
+    month = {12},
+    url = {https://arxiv.org/abs/2212.08983v1},
+    doi = {10.48550/arxiv.2212.08983},
+    arxivId = {2212.08983},
+    keywords = {Convolutional Neural Net-works, Deep Learning, Index Terms-Computer Vision, Machine Learning, Underwater Image Enhancement, Variational Autoen-coder}
 }
 ```
 
