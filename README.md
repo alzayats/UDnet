@@ -23,7 +23,7 @@ In this project, we use Linux host with a single NVidia GeForce RTX 2080 Ti GPU 
 
 ### Inference
 
-Download the pretrained model [pretrained model](https://cloudstor.aarnet.edu.au/plus/s/sO7yrv6LeEwna7K).
+Download the pretrained model [pretrained model](https://drive.google.com/file/d/1SsOoMmO1V2cuYDoFIWfQT_MPmx5lmYZu/view?usp=sharing).
 
 Check  the model and image pathes in Inference.py, and then run:
 
