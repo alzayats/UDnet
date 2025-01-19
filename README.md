@@ -1,13 +1,16 @@
 
-# Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement  ([Paper](https://arxiv.org/pdf/2212.08983.pdf))
+# Adaptive deep learning framework for robust unsupervised underwater image enhancement  ([Paper](https://www.sciencedirect.com/science/article/pii/S0957417424031816))
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Framework](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&logo=PyTorch&logoColor=white)](https://pytorch.org/)
 
 
-The Pytorch Implementation of ''Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement''. 
+The Pytorch Implementation of ''Adaptive deep learning framework for robust unsupervised underwater image enhancement''. 
 
 <div align=center><img src="model_utils/fig_1.png" height = "60%" width = "60%"/></div>
+
+## Abstract
+One of the main challenges in deep learning-based underwater image enhancement is the limited availability of high-quality training data. Underwater images are often difficult to capture and typically suffer from distortion, colour loss, and reduced contrast, complicating the training of supervised deep learning models on large and diverse datasets. This limitation can adversely affect the performance of the model. In this paper, we propose an alternative approach to supervised underwater image enhancement. Specifically, we introduce a novel framework called Uncertainty Distribution Network (UDnet), which adapts to uncertainty distribution during its unsupervised reference map (label) generation to produce enhanced output images. UDnet enhances underwater images by adjusting contrast, saturation, and gamma correction. It incorporates a statistically guided multicolour space stretch module (SGMCSS) to generate a reference map, which is utilized by a U-Net-like conditional variational autoencoder module (cVAE) for feature extraction. These features are then processed by a Probabilistic Adaptive Instance Normalization (PAdaIN) block that encodes the feature uncertainties for the final image enhancement. The SGMCSS module ensures visual consistency with the input image and eliminates the need for manual human annotation. Consequently, UDnet can learn effectively with limited data and achieve state-of-the-art results. We evaluated UDnet on eight publicly available datasets, and the results demonstrate that it achieves competitive performance compared to other state-of-the-art methods in both quantitative and qualitative metrics. Our code is publicly available at https://github.com/alzayats/UDnet.
 
 ## Introduction
 <div align=center><img src="model_utils/fig_8.png"></div>
@@ -46,15 +49,17 @@ If you find UDnet is useful in your research, please cite our paper:
 
 
 ```
-@article{Saleh2022udnet,
-    title = {{Adaptive Uncertainty Distribution in Deep Learning for Unsupervised Underwater Image Enhancement}},
-    year = {2022},
-    author = {Saleh, Alzayat and Sheaves, Marcus and Jerry, Dean and Azghadi, Mostafa Rahimi},
-    month = {12},
-    url = {https://arxiv.org/abs/2212.08983v1},
-    doi = {10.48550/arxiv.2212.08983},
-    arxivId = {2212.08983},
-    keywords = {Convolutional Neural Net-works, Deep Learning, Index Terms-Computer Vision, Machine Learning, Underwater Image Enhancement, Variational Autoen-coder}
+@article{SALEH2025126314,
+title = {Adaptive deep learning framework for robust unsupervised underwater image enhancement},
+journal = {Expert Systems with Applications},
+volume = {268},
+pages = {126314},
+year = {2025},
+issn = {0957-4174},
+doi = {https://doi.org/10.1016/j.eswa.2024.126314},
+url = {https://www.sciencedirect.com/science/article/pii/S0957417424031816},
+author = {Alzayat Saleh and Marcus Sheaves and Dean Jerry and Mostafa {Rahimi Azghadi}},
+keywords = {Computer vision, Convolutional neural networks, Underwater image enhancement, Variational autoencoder, Machine learning, Deep learning},
 }
 ```
 
