@@ -10,8 +10,10 @@ def rgb2hsi(img):
     i = (r + g + b) / 3
     s = 1 - 3 * img.min(1)[0] / (r + g + b + 1e-5)
     x1 = (2 * r - b - g) / 2
-    x2 = ((r - g) ** 2 + (r - b) * (g - b) + 1e-5) ** 0.5
-    angle = torch.arccos(x1 / x2) / 2 / torch.pi
+    # clamp the radicand >= 0 (the cross term (r-b)(g-b) can be negative) and the
+    # arccos argument to [-1, 1] -> avoids sqrt(neg)/arccos NaNs during training
+    x2 = torch.clamp((r - g) ** 2 + (r - b) * (g - b), min=1e-5) ** 0.5
+    angle = torch.arccos(torch.clamp(x1 / x2, -1 + 1e-6, 1 - 1e-6)) / 2 / torch.pi
     # h = torch.Tensor(img.shape[0], img.shape[2], img.shape[3]).to(img.device)
     h = (b <= r) * angle + (b > r) * (1 - angle)
     h = h.unsqueeze(1)
@@ -60,7 +62,8 @@ def hsi2rgb(img):
 
 def rgb2hsv(img):
         img = torch.clamp(img, 0, 1)
-        hue = torch.Tensor(img.shape[0], img.shape[2], img.shape[3]).to(img.device)
+        # zeros, not torch.Tensor() (uninitialised garbage for any unmatched pixel)
+        hue = torch.zeros(img.shape[0], img.shape[2], img.shape[3], device=img.device)
 
         hue[img[:, 2] == img.max(1)[0]] = 4.0 + ((img[:, 0] - img[:, 1]) / (img.max(1)[0] - img.min(1)[0] + 1e-5))[
             img[:, 2] == img.max(1)[0]]

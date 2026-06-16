@@ -11,6 +11,11 @@ from torch.autograd import Variable
 from model_utils.data import get_training_set
 
 
+def str2bool(v):
+    # argparse type=bool is broken: bool("False") is True. Parse the string properly.
+    return str(v).lower() in ("true", "1", "yes", "t", "y")
+
+
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch UDnet')
 parser.add_argument('--device', type=str, default='cuda:0')
@@ -23,13 +28,13 @@ parser.add_argument('--data_dir', type=str, default='./dataset/')
 parser.add_argument('--data_train_dataset', type=str, default='image')
 parser.add_argument('--patch_size', type=int, default=256, help='Size of cropped image')
 parser.add_argument('--save_folder', default='weights/', help='Location to save checkpoint models')
-parser.add_argument('--gpu_mode', type=bool, default=True)
+parser.add_argument('--gpu_mode', type=str2bool, default=True, help='set False to run on CPU')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
 parser.add_argument('--decay', type=int, default='10000', help='learning rate decay type')
 parser.add_argument('--gamma', type=float, default=0.5, help='learning rate decay factor for step decay')
 parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
-parser.add_argument('--data_augmentation', type=bool, default=True)
-parser.add_argument('--resume_train', type=bool, default=False)
+parser.add_argument('--data_augmentation', type=str2bool, default=True)
+parser.add_argument('--resume_train', type=str2bool, default=False)
 parser.add_argument('--model', default='./weights/epoch_last.pth', help='Pretrained base model')
 
 

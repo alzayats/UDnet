@@ -152,7 +152,12 @@ class Decoder(nn.Module):
 class PerceptionLoss(nn.Module):
     def __init__(self):
         super(PerceptionLoss, self).__init__()
-        vgg = vgg16(pretrained=True)
+        # pretrained= was removed in torchvision >= 0.13; use weights= with a fallback
+        try:
+            from torchvision.models import VGG16_Weights
+            vgg = vgg16(weights=VGG16_Weights.IMAGENET1K_V1)
+        except ImportError:
+            vgg = vgg16(pretrained=True)
         loss_network = nn.Sequential(*list(vgg.features)[:31]).eval()
         for param in loss_network.parameters():
             param.requires_grad = False

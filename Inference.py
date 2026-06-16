@@ -10,10 +10,15 @@ from model_utils.UDnet import mynet
 from model_utils.data import get_eval_set
 
 
+def str2bool(v):
+    # argparse type=bool is broken: bool("False") is True. Parse the string properly.
+    return str(v).lower() in ("true", "1", "yes", "t", "y")
+
+
 # settings
 parser = argparse.ArgumentParser(description='PyTorch UDnet')
 parser.add_argument('--testBatchSize', type=int, default=1, help='testing batch size')
-parser.add_argument('--gpu_mode', type=bool, default=True)
+parser.add_argument('--gpu_mode', type=str2bool, default=True, help='set False to run on CPU')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
 parser.add_argument('--seed', type=int, default=123, help='random seed to use Default=123')
 parser.add_argument('--device', type=str, default='cuda:0')
@@ -80,8 +85,10 @@ if __name__ == '__main__':
             os.makedirs(save_dir)
 
         name_list = img_name.split('.', 1)
-        save_fn = save_dir + '/' + name_list[0] + '.' + name_list[1]
-        cv2.imwrite(save_fn, cv2.cvtColor(save_img_pred * 255, cv2.COLOR_BGR2RGB), [cv2.IMWRITE_PNG_COMPRESSION, 0])
+        ext = name_list[1] if len(name_list) > 1 else 'png'
+        save_fn = save_dir + '/' + name_list[0] + '.' + ext
+        save_img_pred = (save_img_pred * 255).clip(0, 255).astype(np.uint8)
+        cv2.imwrite(save_fn, cv2.cvtColor(save_img_pred, cv2.COLOR_BGR2RGB), [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
     def save_img_3(img, img_name, out):
         save_img = img.squeeze().clamp(0, 1).numpy().transpose(1, 2, 0)
@@ -91,7 +98,9 @@ if __name__ == '__main__':
             os.makedirs(save_dir)
 
         name_list = img_name.split('.', 1)
-        save_fn = save_dir + '/' + name_list[0] + '.' + name_list[1]
-        cv2.imwrite(save_fn, cv2.cvtColor(save_img * 255, cv2.COLOR_BGR2RGB), [cv2.IMWRITE_PNG_COMPRESSION, 0])
+        ext = name_list[1] if len(name_list) > 1 else 'png'          # guard extensionless names
+        save_fn = save_dir + '/' + name_list[0] + '.' + ext
+        save_img = (save_img * 255).clip(0, 255).astype(np.uint8)    # cv2.imwrite needs uint8, not float
+        cv2.imwrite(save_fn, cv2.cvtColor(save_img, cv2.COLOR_BGR2RGB), [cv2.IMWRITE_PNG_COMPRESSION, 0])
 
     eval()
