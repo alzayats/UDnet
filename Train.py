@@ -71,6 +71,8 @@ def checkpoint(epoch):
 
 if __name__ == '__main__':
     opt = parser.parse_args()
+    if not opt.gpu_mode:
+        opt.device = 'cpu'          # --gpu_mode False -> CPU (mynet builds on opt.device)
     device = torch.device(opt.device)
     hostname = str(socket.gethostname())
     cudnn.benchmark = True

@@ -30,6 +30,8 @@ parser.add_argument('--model', default='weights/UDnet.pth', help='Pretrained bas
 
 if __name__ == '__main__':
     opt = parser.parse_args()
+    if not opt.gpu_mode:
+        opt.device = 'cpu'          # --gpu_mode False -> CPU (mynet builds on opt.device)
     print(opt)
     device = torch.device(opt.device)
     cuda = opt.gpu_mode
