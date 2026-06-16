@@ -9,7 +9,7 @@ from model_utils.label_gen import *
 
 
 def is_image_file(filename):
-    return any(filename.endswith(extension) for extension in [".png", ".jpg", ".bmp"])
+    return any(filename.lower().endswith(extension) for extension in [".png", ".jpg", ".bmp"])
 
 
 def load_img(filepath):
