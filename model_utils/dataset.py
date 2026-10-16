@@ -75,7 +75,7 @@ class DatasetFromFolder(data.Dataset):
         names = [x for x in listdir(data_dir) if is_image_file(x)]
         if file_list:
             with open(file_list) as f:
-                wanted = {line.strip() for line in f if line.strip()}
+                wanted = {os.path.basename(line.strip()) for line in f if line.strip()}
             missing = wanted - set(names)
             if missing:
                 raise FileNotFoundError(f'{len(missing)} files from {file_list} are not in {data_dir}, '
