@@ -9,7 +9,7 @@ from model_utils.label_gen import *
 
 
 def is_image_file(filename):
-    return any(filename.lower().endswith(extension) for extension in [".png", ".jpg", ".bmp"])
+    return any(filename.lower().endswith(extension) for extension in [".png", ".jpg", ".jpeg", ".bmp"])
 
 
 def load_img(filepath):
@@ -69,10 +69,19 @@ def augment(img_in, img_tar, flip_h=True, rot=True):
 
 
 class DatasetFromFolder(data.Dataset):
-    def __init__(self, label_dir, data_dir, patch_size, data_augmentation, transform=None):
+    def __init__(self, label_dir, data_dir, patch_size, data_augmentation, transform=None, file_list=None):
         super(DatasetFromFolder, self).__init__()
         self.label_path = label_dir 
-        data_filenames = [join(data_dir, x) for x in listdir(data_dir) if is_image_file(x)]
+        names = [x for x in listdir(data_dir) if is_image_file(x)]
+        if file_list:
+            with open(file_list) as f:
+                wanted = {line.strip() for line in f if line.strip()}
+            missing = wanted - set(names)
+            if missing:
+                raise FileNotFoundError(f'{len(missing)} files from {file_list} are not in {data_dir}, '
+                                        f'e.g. {sorted(missing)[:3]}')
+            names = [x for x in names if x in wanted]
+        data_filenames = [join(data_dir, x) for x in names]
         data_filenames.sort()
         self.data_filenames = data_filenames
         self.patch_size = patch_size
