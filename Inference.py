@@ -13,7 +13,7 @@ from PIL import Image
 
 from model_utils.UDnet import load_udnet
 
-WEIGHTS_URL = 'https://github.com/alzayats/UDnet/releases/download/v1.0/UDnet.pth'
+WEIGHTS_URL = 'https://huggingface.co/Alzayats/UDnet/resolve/main/UDnet.pth'
 WEIGHTS_GDRIVE = 'https://drive.google.com/file/d/1SsOoMmO1V2cuYDoFIWfQT_MPmx5lmYZu/view?usp=sharing'
 IMG_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff')
 
@@ -24,7 +24,7 @@ def str2bool(v):
 
 
 parser = argparse.ArgumentParser(description='Enhance underwater images with UDnet')
-parser.add_argument('--input', '--input_dir', dest='input', default='./check_IQA/input/',
+parser.add_argument('--input', '--input_dir', dest='input', required=True,
                     help='an image file or a folder of images')
 parser.add_argument('--output', default='./results/', help='folder to write enhanced images to')
 parser.add_argument('--weights', '--model', dest='weights', default='weights/UDnet.pth',
