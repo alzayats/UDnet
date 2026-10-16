@@ -4,9 +4,11 @@
 UDnet removes the blue–green cast and haze from underwater photos and video frames, at the original resolution.
 Official code for *Adaptive deep learning framework for robust unsupervised underwater image enhancement* (Expert Systems with Applications, 2025).
 
-[Paper (ESWA 2025)](https://www.sciencedirect.com/science/article/pii/S0957417424031816) ·
-[Weights on Hugging Face](https://huggingface.co/Alzayats/UDnet) ·
-[Citation](#citation)
+[![Paper](https://img.shields.io/badge/Paper-ESWA%202025-2a7ab0.svg)](https://www.sciencedirect.com/science/article/pii/S0957417424031816)
+[![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Model-Alzayats%2FUDnet-ffcc4d.svg)](https://huggingface.co/Alzayats/UDnet)
+[![Demo](https://img.shields.io/badge/%F0%9F%A4%97%20Demo-try%20in%20browser-ff9d00.svg)](https://huggingface.co/spaces/Alzayats/UDnet-demo)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?logo=PyTorch&logoColor=white)](https://pytorch.org/)
 
 <p align="center">
   <img src="assets/hero.webp" alt="Underwater images before (left half) and after UDnet (right half)" width="100%">
