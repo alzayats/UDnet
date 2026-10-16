@@ -1,6 +1,5 @@
 import torch.nn as nn
 from model_utils.color_change import *
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class WB(nn.Module):
     def __init__(self):
@@ -109,6 +108,7 @@ class USLN(nn.Module):
 if __name__ == '__main__':
     """60.42 MMac 894"""
     from ptflops import get_model_complexity_info
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net=USLN().to(device)
     x = torch.rand(1, 3, 256, 256).to(device)
     output = net(x)

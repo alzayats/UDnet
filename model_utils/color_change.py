@@ -1,7 +1,4 @@
 import torch
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# torch.cuda.set_device(0)
-# device='cpu'
 def rgb2hsi(img):
     img = torch.clamp(img, 0, 1)
     r = img[:, 0, :, :]
@@ -143,12 +140,12 @@ def hsv2rgb(hsv):
 
 MAT_RGB2XYZ  = torch.Tensor([[0.412453, 0.357580, 0.180423],
                              [0.212671, 0.715160, 0.072169],
-                             [0.019334, 0.119193, 0.950227]]).to(device)
+                             [0.019334, 0.119193, 0.950227]])
 MAT_XYZ2RGB = torch.Tensor([[ 3.2405, -1.5372, -0.4985],
                             [-0.9693,  1.8760,  0.0416],
-                            [ 0.0556, -0.2040,  1.0573]]).to(device)
+                            [ 0.0556, -0.2040,  1.0573]])
 
-XYZ_REF_WHITE = torch.Tensor([0.95047, 1.0, 1.08883]).to(device)
+XYZ_REF_WHITE = torch.Tensor([0.95047, 1.0, 1.08883])
 
 
 def rgb2lab(rgb):
@@ -173,14 +170,14 @@ def rgb_to_xyz(rgb):
     abc[~mask] = xyz[~mask]/12.92
     xyz = abc.permute(0, 2, 3, 1)
     # linear transform
-    xyz = torch.matmul(xyz , MAT_RGB2XYZ.T)
+    xyz = torch.matmul(xyz , MAT_RGB2XYZ.T.to(xyz.device))
     xyz = xyz.permute(0, 3, 1, 2)
     return xyz
 def xyz_to_lab(xyz):
 
 
     xyz=xyz.permute(0, 2, 3, 1)
-    xyz = xyz/XYZ_REF_WHITE
+    xyz = xyz/XYZ_REF_WHITE.to(xyz.device)
 
     # nonlinear transform
     mask = xyz > 0.008856
@@ -224,7 +221,7 @@ def lab_to_xyz(lab):
     xyz[~mask] = (xyz[~mask] - 16.0 / 116.0) / 7.787
 
     # de-normalization
-    xyz = xyz*XYZ_REF_WHITE
+    xyz = xyz*XYZ_REF_WHITE.to(xyz.device)
     xyz=xyz.permute(0, 3, 1, 2)
     return xyz
 
@@ -232,7 +229,7 @@ def xyz_to_rgb(xyz):
 
 
     rgb = xyz.permute(0, 2, 3, 1)
-    rgb = torch.matmul(rgb, MAT_XYZ2RGB.T)
+    rgb = torch.matmul(rgb, MAT_XYZ2RGB.T.to(rgb.device))
 
     # gamma correction
     mask = rgb > 0.0031308
@@ -248,7 +245,7 @@ if __name__ == '__main__':
     with torch.autograd.set_detect_anomaly(True):
         rgb = torch.Tensor([[[0.8, 0.5, 0.5]]])
         rgb.requires_grad_()
-        rgb = torch.unsqueeze(rgb.permute(2,0,1),0).to(device)
+        rgb = torch.unsqueeze(rgb.permute(2,0,1),0)
 
         xzy=rgb_to_xyz(rgb)
 
