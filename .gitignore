@@ -157,3 +157,6 @@ dmypy.json
 !/model_utils/fig_1.png
 !/model_utils/fig_8.png
 
+
+# UDnet outputs
+results/
