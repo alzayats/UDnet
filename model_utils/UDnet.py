@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import argparse
 from torchvision.models.vgg import vgg16
 from torch.distributions import kl
 from model_utils.utils import  ResBlock, ConvBlock, Up, Compute_z
@@ -170,12 +172,14 @@ class PerceptionLoss(nn.Module):
 
 
 class mynet(nn.Module):
-    def __init__(self, opt):
+    def __init__(self, opt, with_loss=True):
         super(mynet, self).__init__()
         self.device = torch.device(opt.device)
         self.decoder = Decoder(device=self.device).to(self.device)
         self.criterion = nn.MSELoss().to(self.device)
-        self.VGG16 = PerceptionLoss().to(self.device)
+        # The VGG16 perceptual loss is only needed for training (it downloads ImageNet weights).
+        if with_loss:
+            self.VGG16 = PerceptionLoss().to(self.device)
 
     def forward(self, Input, label, training=True):
         self.Input = Input
@@ -199,6 +203,36 @@ class mynet(nn.Module):
         self.reconstruction_loss = self.criterion(self.out, target)
         self.vgg16_loss = self.VGG16(self.out, target)
         return self.reconstruction_loss + self.vgg16_loss + self.kl_loss
+
+    @torch.no_grad()
+    def enhance(self, x):
+        """Enhance a batch of RGB images in [0, 1], shape (N, 3, H, W), any H and W.
+        The input is reflect-padded to a multiple of 8 and the output is cropped back."""
+        h, w = x.shape[-2:]
+        ph, pw = (8 - h % 8) % 8, (8 - w % 8) % 8
+        if ph or pw:
+            x = F.pad(x, (0, pw, 0, ph), mode='reflect')
+        self.forward(x, x, training=False)
+        out = self.sample(testing=True)
+        return out[..., :h, :w].clamp(0, 1)
+
+
+def load_udnet(weights, device='cpu'):
+    """Build UDnet for inference and load a checkpoint.
+
+    Accepts the released UDnet.pth and checkpoints written by Train.py. Keys the inference
+    model does not use (the VGG16 loss network and an unused 'physnet' branch) are dropped,
+    then the rest is loaded strictly.
+    """
+    model = mynet(argparse.Namespace(device=str(device)), with_loss=False)
+    state = torch.load(weights, map_location='cpu')
+    if isinstance(state.get('model'), dict):  # resume checkpoint written by Train.py
+        state = state['model']
+    state = {k: v for k, v in state.items()
+             if not (k.startswith('VGG16.') or k.startswith('decoder.physnet.'))}
+    model.load_state_dict(state, strict=True)
+    return model.to(device).eval()
+
 
 if __name__ == '__main__':
     """ """
