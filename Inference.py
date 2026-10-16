@@ -14,7 +14,6 @@ from PIL import Image
 from model_utils.UDnet import load_udnet
 
 WEIGHTS_URL = 'https://huggingface.co/Alzayats/UDnet/resolve/main/UDnet.pth'
-WEIGHTS_GDRIVE = 'https://drive.google.com/file/d/1SsOoMmO1V2cuYDoFIWfQT_MPmx5lmYZu/view?usp=sharing'
 IMG_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff')
 
 
@@ -54,7 +53,7 @@ def ensure_weights(path):
     try:
         torch.hub.download_url_to_file(WEIGHTS_URL, path)
     except Exception as e:
-        sys.exit(f'Download failed ({e}).\nPlease download UDnet.pth manually from {WEIGHTS_GDRIVE}\n'
+        sys.exit(f'Download failed ({e}).\nPlease download UDnet.pth manually from {WEIGHTS_URL}\n'
                  f'and save it as {path}')
 
 

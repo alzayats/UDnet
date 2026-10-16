@@ -34,7 +34,7 @@ A GPU is used automatically when available; otherwise it runs on the CPU.
 |---|---|---|
 | `--input` | (required) | an image file or a folder of images (`png`, `jpg`, `jpeg`, `bmp`, `tif`) |
 | `--output` | `results/` | where enhanced images are written, with the same file names |
-| `--weights` | `weights/UDnet.pth` | model file; the original 62 MB Google Drive checkpoint also works |
+| `--weights` | `weights/UDnet.pth` | model file; older 62 MB checkpoints and `Train.py` checkpoints also work |
 | `--device` | `auto` | `auto`, `cpu`, `cuda`, `cuda:1`, ... |
 | `--format` | `png` | `png` (lossless), `jpg`, or `same` as the input |
 
