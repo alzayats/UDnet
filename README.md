@@ -6,21 +6,22 @@ Official code for *Adaptive deep learning framework for robust unsupervised unde
 
 [![Paper](https://img.shields.io/badge/Paper-ESWA%202025-2a7ab0.svg)](https://www.sciencedirect.com/science/article/pii/S0957417424031816)
 [![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Model-Alzayats%2FUDnet-ffcc4d.svg)](https://huggingface.co/Alzayats/UDnet)
-[![Demo](https://img.shields.io/badge/%F0%9F%A4%97%20Demo-try%20in%20browser-ff9d00.svg)](https://huggingface.co/spaces/Alzayats/UDnet-demo)
+[![Gallery](https://img.shields.io/badge/Gallery-before%20%2F%20after-d9452e.svg)](https://alzayats.github.io/UDnet/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?logo=PyTorch&logoColor=white)](https://pytorch.org/)
 
 <p align="center">
-  <img src="assets/hero.webp" alt="Underwater images before (left half) and after UDnet (right half)" width="100%">
+  <a href="https://alzayats.github.io/UDnet/"><img src="assets/hero_compare.webp" alt="An underwater sculpture scene: the original photo, then UDnet V1, then UDnet V2" width="100%"></a>
 </p>
-<p align="center"><sub>Left half: input. Right half: UDnet output. Images from UIEB, Fish-DETRAC and DeepFish.</sub></p>
+<p align="center"><sub>Original · UDnet V1 (released, fully unsupervised) · UDnet V2 (preview). Image from UIEB.<br>
+<b><a href="https://alzayats.github.io/UDnet/">Open the gallery</a></b> to drag before/after sliders on 24 scenes.</sub></p>
 
 ## Models
 
 | Model | Status | Weights | Notes |
 |---|---|---|---|
-| UDnet v1 | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet) (5.6 MB) | The model from the paper. Unsupervised; 1.4 M parameters. |
-| UDnet v2 | In development | – | Will be announced here. |
+| UDnet v1 | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet) (5.6 MB) | The model from the paper. Fully unsupervised: trained without any reference images. 1.4 M parameters, runs on a CPU. |
+| UDnet v2 | Preview | – | Trained on paired images for stronger correction. See it in the [gallery](https://alzayats.github.io/UDnet/); release coming to this repo. |
 
 The code exactly as published with the paper is tagged [`v1.0-paper`](https://github.com/alzayats/UDnet/tree/v1.0-paper).
 
@@ -45,7 +46,8 @@ On an RTX 4090, a 1920×1080 image takes about 0.1 s.
 | `--device` | `auto` | `cpu`, `cuda`, `cuda:1`, ... |
 | `--format` | `png` | `png`, `jpg`, or `same` as the input |
 
-From Python:
+<details>
+<summary><b>Use it from Python</b></summary>
 
 ```python
 import numpy as np, torch
@@ -58,7 +60,12 @@ out = model.enhance(torch.from_numpy(img).permute(2, 0, 1)[None].cuda())   # (1,
 Image.fromarray((out[0].permute(1, 2, 0).cpu().numpy() * 255).round().astype(np.uint8)).save('out.png')
 ```
 
+</details>
+
 ## Evaluate
+
+<details>
+<summary><b>Score results with PSNR, SSIM, UIQM and UCIQE</b></summary>
 
 `evaluate.py` scores a folder of results. With `--ref` it computes PSNR and SSIM against
 reference images (matched by file name, any extension); UIQM and UCIQE are always reported.
@@ -83,7 +90,15 @@ UIQM follows the FUnIE-GAN implementation and UCIQE the common OpenCV-Lab versio
 other implementations are not directly comparable. For UFO-120 the output is upsampled to the
 640×480 reference before PSNR/SSIM.
 
+UDnet v1 is fully unsupervised: it never sees a reference image during training, so it is not
+trying to reproduce the reference style that PSNR and SSIM reward. UIQM and UCIQE need no reference.
+
+</details>
+
 ## Train
+
+<details>
+<summary><b>Train or fine-tune on your own images</b></summary>
 
 UDnet needs only a folder of underwater images. Training targets are generated from each image on the fly.
 
@@ -97,7 +112,12 @@ python Train.py --train_dir UIEB/raw-890 --train_list splits/UIEB/train800.txt  
 Checkpoints go to `weights/`: `epoch_last.pth` every 2 epochs and `epoch_<N>.pth` every `--snapshots` epochs.
 See `python Train.py -h` for all options.
 
+</details>
+
 ## Test splits
+
+<details>
+<summary><b>Which images are in each test split</b></summary>
 
 Each file in [`splits/`](splits) lists image names, one per line.
 
@@ -113,7 +133,12 @@ Each file in [`splits/`](splits) lists image names, one per line.
 | `paper_test/FishID.txt` | 50 | FishID |
 | `UIEB/train800.txt`, `UIEB/test90.txt` | 800 / 90 | UIEB `raw-890`, fixed random split (seed 0) |
 
+</details>
+
 ## How it works
+
+<details>
+<summary><b>Model design in one paragraph</b></summary>
 
 <p align="center"><img src="model_utils/fig_8.png" width="90%"></p>
 
@@ -123,6 +148,8 @@ refined by a learned multi-colour-space stretch module (SGMCSS). A conditional v
 autoencoder learns from these noisy references, and a probabilistic adaptive instance
 normalisation block (PAdaIN) models how uncertain they are. At test time only the image encoder
 and decoder run. Details are in the [paper](https://www.sciencedirect.com/science/article/pii/S0957417424031816).
+
+</details>
 
 ## Citation
 
