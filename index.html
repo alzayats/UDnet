@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="UDnet restores natural colour and contrast in underwater photos. Before/after gallery of UDnet V1 and V2.">
+<meta property="og:title" content="UDnet: underwater image enhancement">
+<meta property="og:description" content="Drag the sliders to see UDnet V1 and V2 bring the colour back to underwater photos.">
+<meta property="og:image" content="https://alzayats.github.io/UDnet/img/l400-1522-v2.webp">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>UDnet Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; hero slider full column width; gallery a 2-up grid of sliders that stacks on phones. */
+:root {
+  --bg: #f2f6f5;          /* pale sand-water */
+  --surface: #ffffff;
+  --ink: #0f1d20;         /* deep teal-black */
+  --muted: #4e6266;
+  --line: #d3dedc;
+  --accent: #d9452e;      /* coral: the colour water removes first */
+  --accent-ink: #ffffff;
+  --code-bg: #e5eeec;
+  --red: #e0402a; --orange: #f08a24; --yellow: #e8c22a; --green: #3aa86b; --blue: #2f7fc1;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1517; --surface: #122124; --ink: #e3eeec; --muted: #9fb4b6; --line: #24383b;
+    --accent: #ff7a5f; --accent-ink: #1a0d09; --code-bg: #16292c;
+    --red: #ff6a52; --orange: #ffa04a; --yellow: #f2d353; --green: #5cc98c; --blue: #5aa5e6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1517; --surface: #122124; --ink: #e3eeec; --muted: #9fb4b6; --line: #24383b;
+  --accent: #ff7a5f; --accent-ink: #1a0d09; --code-bg: #16292c;
+  --red: #ff6a52; --orange: #ffa04a; --yellow: #f2d353; --green: #5cc98c; --blue: #5aa5e6;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 0 64px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.6rem, 3.2vw, 2.3rem); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+p { margin: 0; }
+a { color: inherit; }
+.lede { color: var(--muted); max-width: 62ch; font-size: 1.05rem; }
+.eyebrow { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+section { display: grid; gap: 20px; padding-block: 56px 0; }
+
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; flex-wrap: wrap; }
+.mark { font: 800 1.35rem/1 var(--display); letter-spacing: -0.02em; text-decoration: none; }
+.mark span { color: var(--accent); }
+.nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.92rem; }
+.nav a { text-decoration: none; color: var(--muted); }
+.nav a:hover, .nav a:focus-visible { color: var(--ink); }
+
+/* hero */
+.hero { display: grid; gap: 22px; padding-block: 28px 0; }
+.hero h1 { font-size: clamp(2.3rem, 6vw, 4.4rem); font-weight: 800; letter-spacing: -0.025em; max-width: 15ch; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px; font: 600 0.95rem/1 var(--body);
+  text-decoration: none; border: 1.5px solid var(--ink); color: var(--ink); background: transparent; cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:focus-visible, .seg button:focus-visible, .chip:focus-visible, .copy:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+/* compare slider */
+.cmp { position: relative; overflow: hidden; border-radius: var(--radius); background: var(--code-bg); aspect-ratio: 3 / 2; max-width: 100%; --pos: 50%; user-select: none; }
+.cmp.hero-cmp { aspect-ratio: 16 / 9; }
+.cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.cmp .before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.cmp .bar { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.25); pointer-events: none; }
+.cmp .knob { position: absolute; top: 50%; left: var(--pos); width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); pointer-events: none; display: grid; place-items: center; color: #0f1d20; font: 600 14px/1 var(--mono); }
+.cmp input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+.cmp input:focus-visible ~ .knob { outline: 3px solid var(--blue); outline-offset: 2px; }
+.tag { position: absolute; top: 10px; padding: 4px 8px; border-radius: 6px; font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.04em;
+  background: rgba(10, 20, 22, 0.62); color: #fff; pointer-events: none; }
+.tag.l { left: 10px; } .tag.r { right: 10px; }
+
+/* version switch */
+.seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: 600 0.9rem/1 var(--body); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.note { font-size: 0.88rem; color: var(--muted); max-width: 70ch; }
+
+/* absorption chart */
+.absorb { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.arow { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 12px; }
+.arow b { font: 500 0.8rem/1 var(--mono); color: var(--muted); }
+.track { position: relative; height: 16px; }
+.fade { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+.axis { position: relative; height: 22px; margin-left: 82px; font: 400 0.75rem/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; border-top: 1px solid var(--line); }
+.axis span { position: absolute; top: 6px; transform: translateX(-50%); white-space: nowrap; }
+.axis span:first-child { transform: none; }
+.axis span:last-child { transform: translateX(-100%); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+.two > * { min-width: 0; }
+
+/* gallery */
+.bar-tools { display: flex; gap: 14px 20px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 7px 13px; border-radius: 999px; font: 500 0.86rem/1 var(--body); cursor: pointer; }
+.chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.chip .n { font-family: var(--mono); color: var(--muted); margin-left: 4px; font-size: 0.78rem; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.card { display: grid; gap: 8px; margin: 0; }
+.card figcaption { display: flex; justify-content: space-between; gap: 10px; font: 400 0.8rem/1.3 var(--mono); color: var(--muted); }
+
+/* versions */
+.versions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.ver { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 10px; align-content: start; }
+.ver .state { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.ver.main { border-color: var(--accent); }
+.ver.main .state { color: var(--accent); }
+.ver ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 0.92rem; display: grid; gap: 4px; }
+
+/* numbers */
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-variant-numeric: tabular-nums; font-size: 0.95rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+td.up { font-weight: 600; }
+
+/* code */
+pre { margin: 0; background: var(--code-bg); border-radius: var(--radius); padding: 16px 18px; overflow-x: auto; font: 400 0.88rem/1.6 var(--mono); }
+.codebox { position: relative; }
+.copy { position: absolute; top: 10px; right: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 0.78rem/1 var(--body); padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; gap: 12px 24px; flex-wrap: wrap; justify-content: space-between; color: var(--muted); font-size: 0.88rem; }
+
+@media (max-width: 760px) {
+  .grid, .two, .versions { grid-template-columns: 1fr; }
+  .wrap { padding-inline: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cmp.intro .before, .cmp.intro .bar, .cmp.intro .knob { transition: clip-path .9s ease, left .9s ease; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#top">UD<span>net</span></a>
+    <nav class="nav" aria-label="Project links">
+      <a href="#gallery">Gallery</a>
+      <a href="#use">Use it</a>
+      <a href="https://github.com/alzayats/UDnet">GitHub</a>
+      <a href="https://doi.org/10.1016/j.eswa.2024.126314">Paper</a>
+      <a href="https://huggingface.co/Alzayats/UDnet">Weights</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <p class="eyebrow">Underwater image enhancement · open source</p>
+      <h1>Bring the <em>colour</em> back to underwater photos.</h1>
+      <p class="lede">Water soaks up red light within a few metres, so most underwater footage comes out green or blue and hazy. UDnet is a neural network that restores natural colour and contrast in one pass. Drag the handle to compare.</p>
+      <div class="cmp hero-cmp" id="hero" style="--pos:50%"></div>
+      <div class="hero-row">
+        <div class="seg" role="group" aria-label="Model version" id="seg"></div>
+        <a class="btn primary" href="#use">Get started</a>
+        <a class="btn" href="https://github.com/alzayats/UDnet">View on GitHub</a>
+      </div>
+      <p class="note" id="vnote"></p>
+    </div>
+
+    <section aria-labelledby="why">
+      <div class="two">
+        <div style="display:grid;gap:14px">
+          <p class="eyebrow">The problem</p>
+          <h2 id="why">Red goes first.</h2>
+          <p class="lede">Each colour fades at a different depth. Red is mostly gone by about 5 m, orange by 10 m and yellow by 20 m, while green and blue carry much further. Floating particles add a milky haze on top. UDnet has seen thousands of these scenes and learned how to put the missing colour back.</p>
+        </div>
+        <div class="absorb" role="img" aria-label="Approximate depth at which each colour of sunlight fades in clear ocean water: red about 5 metres, orange about 10, yellow about 20, green beyond 30.">
+          <div class="arow"><b>red</b><div class="track"><div class="fade" style="width:16.7%;background:linear-gradient(90deg,var(--red),transparent)"></div></div></div>
+          <div class="arow"><b>orange</b><div class="track"><div class="fade" style="width:33.3%;background:linear-gradient(90deg,var(--orange),transparent)"></div></div></div>
+          <div class="arow"><b>yellow</b><div class="track"><div class="fade" style="width:66.7%;background:linear-gradient(90deg,var(--yellow),transparent)"></div></div></div>
+          <div class="arow"><b>green</b><div class="track"><div class="fade" style="width:100%;background:linear-gradient(90deg,var(--green),color-mix(in srgb,var(--green) 35%,transparent))"></div></div></div>
+          <div class="arow"><b>blue</b><div class="track"><div class="fade" style="width:100%;background:var(--blue)"></div></div></div>
+          <div class="axis"><span style="left:0">0 m</span><span style="left:16.7%">5</span><span style="left:33.3%">10</span><span style="left:66.7%">20</span><span style="left:100%">30 m</span></div>
+          <p class="note">Approximate, for clear ocean water. Coastal and green water lose light much faster.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" aria-labelledby="gal">
+      <p class="eyebrow">Gallery</p>
+      <h2 id="gal">24 scenes from public test sets</h2>
+      <p class="lede">None of these images were used to train V2. Pick a version once and every slider follows.</p>
+      <div class="bar-tools">
+        <div class="chips" role="group" aria-label="Filter scenes" id="chips"></div>
+        <div class="seg" role="group" aria-label="Model version" id="seg2"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section aria-labelledby="vers">
+      <p class="eyebrow">Versions</p>
+      <h2 id="vers">Pick the version that fits the job</h2>
+      <div class="versions">
+        <div class="ver">
+          <span class="state">Released · v1.1</span>
+          <h3>UDnet V1</h3>
+          <p>The model from our ESWA 2025 paper. Fully unsupervised: it learned from raw underwater photos alone, with no reference images, so it never copies another method's style.</p>
+          <ul><li>5.6 MB of weights, runs on a laptop CPU</li><li>Gentle, conservative correction</li><li>Weights auto-download on first run</li></ul>
+        </div>
+        <div class="ver main">
+          <span class="state">Preview · coming to the repo</span>
+          <h3>UDnet V2</h3>
+          <p>Trained on thousands of paired images with a modern restoration network. Much stronger colour and haze correction while staying faithful to the scene.</p>
+          <ul><li>Best accuracy against reference images</li><li>Needs a GPU for large images</li><li>Same repo, same command</li></ul>
+        </div>
+        <div class="ver">
+          <span class="state">Preview · optional</span>
+          <h3>V2 + AI detail</h3>
+          <p>Runs V2, then a generative model that sharpens and upscales 2×. Great for viewing and sharing.</p>
+          <ul><li>Crisp edges, less noise and blocking</li><li>Can invent fine texture that was not captured</li><li>Not for measurements or science</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="nums">
+      <p class="eyebrow">Measured</p>
+      <h2 id="nums">Scores on held-out test images</h2>
+      <p class="lede">PSNR (dB) and SSIM measure how close an output is to each test set's reference image; higher is better. V1 is fully unsupervised and never saw a reference image, so it is not trying to match them. V2 was trained on paired images, which is what these scores reward. V2 figures are from the current preview model.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Test set</th><th>Images</th><th>V1 PSNR</th><th>V2 PSNR</th><th>V1 SSIM</th><th>V2 SSIM</th></tr></thead>
+          <tbody>
+            <tr><td>UIEB test split</td><td>90</td><td>19.86</td><td class="up">22.86</td><td>0.842</td><td class="up">0.909</td></tr>
+            <tr><td>LSUI test split</td><td>400</td><td>19.64</td><td class="up">28.07</td><td>0.807</td><td class="up">0.910</td></tr>
+            <tr><td>EUVP test samples</td><td>515</td><td>19.59</td><td class="up">25.93</td><td>0.783</td><td class="up">0.874</td></tr>
+            <tr><td>UFO-120 test</td><td>120</td><td>18.53</td><td class="up">24.71</td><td>0.628</td><td class="up">0.734</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="use" aria-labelledby="usehd">
+      <p class="eyebrow">Use it</p>
+      <h2 id="usehd">Enhance a folder in three commands</h2>
+      <p class="lede">Works on a single image or a whole folder. The weights download automatically the first time.</p>
+      <div class="codebox">
+        <pre id="cmd">git clone https://github.com/alzayats/UDnet.git
+cd UDnet && pip install -r requirements.txt
+python Inference.py --input path/to/images --output results/</pre>
+        <button class="copy" type="button" data-copy="cmd">Copy</button>
+      </div>
+      <h3 style="margin-top:12px">Cite UDnet</h3>
+      <div class="codebox">
+        <pre id="bib">@article{SALEH2025126314,
+  title   = {Adaptive deep learning framework for robust unsupervised underwater image enhancement},
+  author  = {Alzayat Saleh and Marcus Sheaves and Dean Jerry and Mostafa {Rahimi Azghadi}},
+  journal = {Expert Systems with Applications},
+  volume  = {268},
+  pages   = {126314},
+  year    = {2025},
+  doi     = {10.1016/j.eswa.2024.126314}
+}</pre>
+        <button class="copy" type="button" data-copy="bib">Copy</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>UDnet · MIT licence · Test images belong to UIEB, LSUI and RUIE and are shown for comparison.</span>
+    <span><a href="https://github.com/alzayats/UDnet">github.com/alzayats/UDnet</a></span>
+  </footer>
+</div>
+
+<script>
+const ITEMS = [["c60-15603","green","C60","15603"],["c60-5","green","C60","5"],["c60-100001","green","C60","100001"],["l400-1171","green","L400","1171"],["ruie-green_10","green","RUIE","green_10"],["l400-1522","green","L400","1522"],["c60-6527","green","C60","6527"],["l400-240","green","L400","240"],["t90-867","blue","T90","867"],["t90-914","blue","T90","914"],["t90-499","blue","T90","499"],["t90-14","blue","T90","14"],["c60-2583","blue","C60","2583"],["c60-12753","low","C60","12753"],["c60-3519","low","C60","3519"],["c60-12709","low","C60","12709"],["c60-9618","low","C60","9618"],["c60-2856","reef","C60","2856"],["t90-572","reef","T90","572"],["c60-10226","reef","C60","10226"],["c60-10091","reef","C60","10091"],["t90-683","reef","T90","683"],["t90-70","wreck","T90","70"],["t90-787","wreck","T90","787"]];
+const CATS = { all: "All", green: "Green water", blue: "Blue water", low: "Low light", reef: "Reef life", wreck: "Wrecks & divers" };
+const SETS = { T90: "UIEB", C60: "UIEB Challenging", L400: "LSUI", RUIE: "RUIE" };
+const VERS = {
+  v2: { label: "UDnet V2", note: "V2 preview: trained on paired images, strongest faithful correction." },
+  v1: { label: "UDnet V1", note: "V1: the released model from our ESWA 2025 paper. Fully unsupervised: it learned without a single reference image." },
+  ai: { label: "V2 + AI", note: "V2 + AI detail: sharper and 2× upscaled. Fine texture may be invented, so use it for viewing, not measurement." }
+};
+const HERO = "l400-1522";
+let version = "v2", filter = "all";
+try { version = localStorage.getItem("udnet-version") || "v2"; if (!VERS[version]) version = "v2"; } catch (e) {}
+
+const src = (id, tag) => `img/${id}-${tag}.webp`;
+
+function makeCmp(el, id, eager) {
+  el.innerHTML = `
+    <img class="after" alt="Enhanced" src="${src(id, version)}" ${eager ? "" : 'loading="lazy"'}>
+    <img class="before" alt="Original underwater photo" src="${src(id, "in")}" ${eager ? "" : 'loading="lazy"'}>
+    <span class="tag l">Original</span><span class="tag r">${VERS[version].label}</span>
+    <div class="bar"></div>
+    <input type="range" min="0" max="100" value="50" step="0.5" aria-label="Compare original and enhanced">
+    <div class="knob" aria-hidden="true">⇆</div>`;
+  el.dataset.id = id;
+  const r = el.querySelector("input");
+  r.addEventListener("input", () => el.style.setProperty("--pos", r.value + "%"));
+}
+
+function setVersion(v) {
+  version = v;
+  try { localStorage.setItem("udnet-version", v); } catch (e) {}
+  document.querySelectorAll(".cmp").forEach(el => {
+    el.querySelector(".after").src = src(el.dataset.id, v);
+    el.querySelector(".tag.r").textContent = VERS[v].label;
+  });
+  document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+  document.getElementById("vnote").textContent = VERS[v].note;
+}
+
+function buildSeg(host) {
+  for (const [k, o] of Object.entries(VERS).sort((a, b) => ["v1", "v2", "ai"].indexOf(a[0]) - ["v1", "v2", "ai"].indexOf(b[0]))) {
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.v = k; b.textContent = o.label;
+    b.addEventListener("click", () => setVersion(k));
+    host.appendChild(b);
+  }
+}
+
+function buildChips() {
+  const host = document.getElementById("chips");
+  for (const [k, label] of Object.entries(CATS)) {
+    const n = k === "all" ? ITEMS.length : ITEMS.filter(i => i[1] === k).length;
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.dataset.f = k;
+    b.innerHTML = `${label}<span class="n">${n}</span>`;
+    b.setAttribute("aria-pressed", String(k === filter));
+    b.addEventListener("click", () => {
+      filter = k;
+      host.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c.dataset.f === k)));
+      document.querySelectorAll(".card").forEach(c => { c.hidden = !(k === "all" || c.dataset.cat === k); });
+    });
+    host.appendChild(b);
+  }
+}
+
+function buildGrid() {
+  const grid = document.getElementById("grid");
+  for (const [id, cat, set, name] of ITEMS) {
+    const fig = document.createElement("figure");
+    fig.className = "card"; fig.dataset.cat = cat;
+    const c = document.createElement("div"); c.className = "cmp";
+    makeCmp(c, id, false);
+    const cap = document.createElement("figcaption");
+    cap.innerHTML = `<span>${CATS[cat]}</span><span>${SETS[set]} · ${name}</span>`;
+    fig.append(c, cap);
+    grid.appendChild(fig);
+  }
+}
+
+document.querySelectorAll("[data-copy]").forEach(btn => btn.addEventListener("click", () => {
+  const pre = document.getElementById(btn.dataset.copy);
+  const done = () => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy"), 1500); };
+  const fallback = () => { const s = getSelection(), r = document.createRange(); r.selectNodeContents(pre); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected"; };
+  try { navigator.clipboard.writeText(pre.textContent).then(done, fallback); } catch (e) { fallback(); }
+}));
+
+const hero = document.getElementById("hero");
+makeCmp(hero, HERO, true);
+buildSeg(document.getElementById("seg"));
+buildSeg(document.getElementById("seg2"));
+buildChips();
+buildGrid();
+setVersion(version);
+
+// one gentle sweep on the hero so first-time visitors see it is a slider
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  hero.classList.add("intro");
+  const r = hero.querySelector("input");
+  setTimeout(() => { hero.style.setProperty("--pos", "78%"); r.value = 78; }, 700);
+  setTimeout(() => { hero.style.setProperty("--pos", "50%"); r.value = 50; }, 1700);
+  setTimeout(() => hero.classList.remove("intro"), 2700);
+}
+</script>
+
+</body>
+</html>
