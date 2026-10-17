@@ -19,9 +19,9 @@ Official code for *Adaptive deep learning framework for robust unsupervised unde
 ## Models
 
 | Model | Status | Weights | Notes |
-|---|---|---|---|
-| UDnet v1 | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet) (5.6 MB) | The model from the paper. Fully unsupervised: trained without any reference images. 1.4 M parameters, runs on a CPU. |
-| UDnet v2 | Preview | – | Trained on paired images for stronger correction. See it in the [gallery](https://alzayats.github.io/UDnet/); release coming to this repo. |
+|:--|:--|:--|:--|
+| **UDnet&nbsp;V1** | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet)&nbsp;·&nbsp;5.6&nbsp;MB | Paper model. Fully unsupervised, 1.4 M parameters, runs on a CPU. |
+| **UDnet&nbsp;V2** | Preview | Coming&nbsp;soon | Trained on paired images for stronger correction. See the [gallery](https://alzayats.github.io/UDnet/). |
 
 The code exactly as published with the paper is tagged [`v1.0-paper`](https://github.com/alzayats/UDnet/tree/v1.0-paper).
 
