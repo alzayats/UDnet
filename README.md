@@ -18,13 +18,13 @@ Official code for *Adaptive deep learning framework for robust unsupervised unde
 
 ## Models
 
-| Model | Status | Weights | Speed (1080p) | Notes |
+| Model | Status | Weights | Speed (256×256) | Notes |
 |:--|:--|:--|:--|:--|
-| **UDnet&nbsp;V1** | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet)&nbsp;·&nbsp;5.6&nbsp;MB | 11.8&nbsp;img/s&nbsp;GPU<br>0.3&nbsp;img/s&nbsp;CPU | Paper model. Fully unsupervised, 1.4 M parameters, runs on a CPU. |
-| **UDnet&nbsp;V2** | Preview | Coming&nbsp;soon | 6.3&nbsp;img/s&nbsp;GPU | Trained on paired images for stronger correction. See the [gallery](https://alzayats.github.io/UDnet/). |
-| **UDnet&nbsp;V2&nbsp;+&nbsp;AI** | Preview | Coming&nbsp;soon | 1.7&nbsp;img/s&nbsp;GPU | V2 plus an AI detail pass: sharper, 2× upscaled. Can invent fine texture, so it's for viewing, not measurement. |
+| **UDnet&nbsp;V1** | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet)&nbsp;·&nbsp;5.6&nbsp;MB | 457&nbsp;img/s&nbsp;GPU<br>11&nbsp;img/s&nbsp;CPU | Paper model. Fully unsupervised, 1.4 M parameters, runs on a CPU. |
+| **UDnet&nbsp;V2** | Preview | Coming&nbsp;soon | 100&nbsp;img/s&nbsp;GPU | Trained on paired images for stronger correction. See the [gallery](https://alzayats.github.io/UDnet/). |
+| **UDnet&nbsp;V2&nbsp;+&nbsp;AI** | Preview | Coming&nbsp;soon | 38&nbsp;img/s&nbsp;GPU | V2 plus an AI detail pass: sharper, 2× upscaled. Can invent fine texture, so it's for viewing, not measurement. |
 
-<sub>Speed: one 1920×1080 frame on an RTX 4090 (CPU: 24 threads), model time only.</sub>
+<sub>Speed: one 256×256 image on an RTX 4090 (CPU: 24 threads), model time only.</sub>
 
 The code exactly as published with the paper is tagged [`v1.0-paper`](https://github.com/alzayats/UDnet/tree/v1.0-paper).
 
