@@ -216,7 +216,7 @@ Each file in [`splits/`](splits) lists image names, one per line.
 ## How it works
 
 <details>
-<summary><b>Model design in one paragraph</b></summary>
+<summary><b>UDnet V1: the unsupervised paper model</b></summary>
 
 <p align="center"><img src="model_utils/fig_8.png" width="90%"></p>
 
@@ -226,6 +226,22 @@ refined by a learned multi-colour-space stretch module (SGMCSS). A conditional v
 autoencoder learns from these noisy references, and a probabilistic adaptive instance
 normalisation block (PAdaIN) models how uncertain they are. At test time only the image encoder
 and decoder run. Details are in the [paper](https://www.sciencedirect.com/science/article/pii/S0957417424031816).
+
+</details>
+
+<details>
+<summary><b>UDnet V2: the supervised preview model</b></summary>
+
+V2 trades V1's independence from reference images for stronger correction. It is a
+[NAFNet](https://github.com/megvii-research/NAFNet)-style U-Net (Chen et al., ECCV 2022) with 29 M
+parameters, preceded by a small global colour branch that predicts a per-image 3×3 colour matrix
+and offset. Because underwater colour casts are largely global, this branch removes most of the
+cast before the U-Net restores local contrast and detail. V2 is trained on about 3,900 input/reference
+pairs from UIEB and LSUI (see [Train](#train)), so it learns the look of those references; V1 remains the
+better choice when no reference style should be imposed, or when only a CPU is available.
+
+The optional `--ai` pass runs [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) after V2 to sharpen
+and upscale. It is generative and can add texture that was not captured.
 
 </details>
 

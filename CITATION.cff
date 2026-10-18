@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use UDnet, please cite the paper below."
+title: "UDnet: underwater image enhancement"
+type: software
+license: MIT
+repository-code: "https://github.com/alzayats/UDnet"
+url: "https://alzayats.github.io/UDnet/"
+authors:
+  - family-names: Saleh
+    given-names: Alzayat
+  - family-names: Sheaves
+    given-names: Marcus
+  - family-names: Jerry
+    given-names: Dean
+  - family-names: Rahimi Azghadi
+    given-names: Mostafa
+preferred-citation:
+  type: article
+  title: "Adaptive deep learning framework for robust unsupervised underwater image enhancement"
+  authors:
+    - family-names: Saleh
+      given-names: Alzayat
+    - family-names: Sheaves
+      given-names: Marcus
+    - family-names: Jerry
+      given-names: Dean
+    - family-names: Rahimi Azghadi
+      given-names: Mostafa
+  journal: "Expert Systems with Applications"
+  volume: 268
+  start: 126314
+  year: 2025
+  doi: "10.1016/j.eswa.2024.126314"
