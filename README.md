@@ -1,5 +1,11 @@
 # UDnet
 
+> [!NOTE]
+> **This is the experimental `ai-max` branch.** It adds *V2 + AI Max*, a diffusion-based detail-restoration
+> stage after UDnet V2 (`ai_max.py`). It needs its own environment, about 15 GB of disk and a GPU with
+> about 10 GB of memory, and it can synthesise detail that was not captured. See **[AI_MAX.md](AI_MAX.md)**
+> for setup, limitations and licences. For everything else, use the [`main`](https://github.com/alzayats/UDnet) branch.
+
 **Underwater image enhancement trained without ground truth.**
 UDnet removes the blue–green cast and haze from underwater photos and video frames, at the original resolution.
 Official code for *Adaptive deep learning framework for robust unsupervised underwater image enhancement* (Expert Systems with Applications, 2025).
