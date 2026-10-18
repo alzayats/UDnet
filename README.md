@@ -71,6 +71,19 @@ For V2, load it with `from model_utils.UDnet_v2 import load_udnet_v2` and
 
 </details>
 
+<details>
+<summary><b>V2 + AI Max (experimental, separate branch)</b></summary>
+
+The most detailed results in the [gallery](https://alzayats.github.io/UDnet/) add a diffusion-based
+detail-restoration stage ([DiffBIR](https://github.com/XPixelGroup/DiffBIR)) after V2. Because it needs
+its own environment, about 15 GB of disk, a GPU with about 10 GB of memory and roughly 25 s per image,
+it is kept on the [`ai-max`](https://github.com/alzayats/UDnet/tree/ai-max) branch rather than in the
+main installation. It can synthesise detail that was not captured, so it is intended for viewing, not
+for measurement. Requirements, limitations and licences are described in
+[`AI_MAX.md`](https://github.com/alzayats/UDnet/blob/ai-max/AI_MAX.md).
+
+</details>
+
 ## Evaluate
 
 <details>
