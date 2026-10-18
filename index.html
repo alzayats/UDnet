@@ -118,7 +118,8 @@ section { display: grid; gap: 20px; padding-block: 56px 0; }
 .card figcaption { display: flex; justify-content: space-between; gap: 10px; font: 400 0.8rem/1.3 var(--mono); color: var(--muted); }
 
 /* versions */
-.versions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.versions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 1100px) { .versions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ver { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 10px; align-content: start; }
 .ver .state { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .ver.main { border-color: var(--accent); }
@@ -146,9 +147,9 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
   .cmp.intro .before, .cmp.intro .bar, .cmp.intro .knob { transition: clip-path .9s ease, left .9s ease; }
 }
 </style>
-
 </head>
 <body>
+
 <div class="wrap">
   <header class="top">
     <a class="mark" href="#top">UD<span>net</span></a>
@@ -227,6 +228,12 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
           <p>Runs V2, then a generative model that sharpens and upscales 2×. Great for viewing and sharing.</p>
           <ul><li>Crisp edges, less noise and blocking</li><li>Can invent fine texture that was not captured</li><li>Not for measurements or science</li></ul>
         </div>
+        <div class="ver">
+          <span class="state">Preview · optional, slow</span>
+          <h3>V2 + AI Max</h3>
+          <p>Runs V2, then a diffusion model (DiffBIR) that restores fine natural detail such as spines, scales and tentacles, upscaled 2×. Colours stay V2's.</p>
+          <ul><li>The most detailed look</li><li>About 25 s per image on a GPU</li><li>Invents more than V2 + AI: viewing only</li></ul>
+        </div>
       </div>
     </section>
 
@@ -286,7 +293,8 @@ const SETS = { T90: "UIEB", C60: "UIEB Challenging", L400: "LSUI", RUIE: "RUIE" 
 const VERS = {
   v2: { label: "UDnet V2", note: "V2 preview: trained on paired images, strongest faithful correction." },
   v1: { label: "UDnet V1", note: "V1: the released model from our ESWA 2025 paper. Fully unsupervised: it learned without a single reference image." },
-  ai: { label: "V2 + AI", note: "V2 + AI detail: sharper and 2× upscaled. Fine texture may be invented, so use it for viewing, not measurement." }
+  ai: { label: "V2 + AI", note: "V2 + AI detail: sharper and 2× upscaled. Fine texture may be invented, so use it for viewing, not measurement." },
+  db: { label: "V2 + AI Max", note: "V2 + AI Max: a diffusion model adds fine natural detail, 2× upscaled. Slow, and texture may be invented, so use it for viewing, not measurement." }
 };
 const HERO = "l400-1522";
 let version = "v2", filter = "all";
@@ -319,7 +327,7 @@ function setVersion(v) {
 }
 
 function buildSeg(host) {
-  for (const [k, o] of Object.entries(VERS).sort((a, b) => ["v1", "v2", "ai"].indexOf(a[0]) - ["v1", "v2", "ai"].indexOf(b[0]))) {
+  for (const [k, o] of Object.entries(VERS).sort((a, b) => ["v1", "v2", "ai", "db"].indexOf(a[0]) - ["v1", "v2", "ai", "db"].indexOf(b[0]))) {
     const b = document.createElement("button");
     b.type = "button"; b.dataset.v = k; b.textContent = o.label;
     b.addEventListener("click", () => setVersion(k));
