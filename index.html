@@ -217,10 +217,10 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
           <ul><li>5.6 MB of weights, runs on a laptop CPU</li><li>Gentle, conservative correction</li><li>Weights auto-download on first run</li></ul>
         </div>
         <div class="ver main">
-          <span class="state">Preview · coming to the repo</span>
+          <span class="state">Preview · in the repo</span>
           <h3>UDnet V2</h3>
           <p>Trained on thousands of paired images with a modern restoration network. Much stronger colour and haze correction while staying faithful to the scene.</p>
-          <ul><li>Best accuracy against reference images</li><li>Needs a GPU for large images</li><li>Same repo, same command</li></ul>
+          <ul><li>Best accuracy against reference images</li><li>Needs a GPU for large images</li><li>Same command, add <code style="white-space:nowrap">--model v2</code></li></ul>
         </div>
         <div class="ver">
           <span class="state">Preview · optional</span>
@@ -229,7 +229,7 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
           <ul><li>Crisp edges, less noise and blocking</li><li>Can invent fine texture that was not captured</li><li>Not for measurements or science</li></ul>
         </div>
         <div class="ver">
-          <span class="state">Preview · optional, slow</span>
+          <span class="state">Preview · gallery only</span>
           <h3>V2 + AI Max</h3>
           <p>Runs V2, then a diffusion model (DiffBIR) that restores fine natural detail such as spines, scales and tentacles, upscaled 2×. Colours stay V2's.</p>
           <ul><li>The most detailed look</li><li>About 25 s per image on a GPU</li><li>Invents more than V2 + AI: viewing only</li></ul>
@@ -256,12 +256,14 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
 
     <section id="use" aria-labelledby="usehd">
       <p class="eyebrow">Use it</p>
-      <h2 id="usehd">Enhance a folder in three commands</h2>
+      <h2 id="usehd">Enhance a folder in one command</h2>
       <p class="lede">Works on a single image or a whole folder. The weights download automatically the first time.</p>
       <div class="codebox">
         <pre id="cmd">git clone https://github.com/alzayats/UDnet.git
 cd UDnet && pip install -r requirements.txt
-python Inference.py --input path/to/images --output results/</pre>
+python Inference.py --input path/to/images --output results/                     # V1
+python Inference.py --input path/to/images --output results/ --model v2          # V2
+python Inference.py --input path/to/images --output results/ --model v2 --ai x2  # V2 + AI</pre>
         <button class="copy" type="button" data-copy="cmd">Copy</button>
       </div>
       <h3 style="margin-top:12px">Cite UDnet</h3>
@@ -297,8 +299,8 @@ const VERS = {
   db: { label: "V2 + AI Max", note: "V2 + AI Max: a diffusion model adds fine natural detail, 2× upscaled. Slow, and texture may be invented, so use it for viewing, not measurement." }
 };
 const HERO = "l400-1522";
-let version = "v2", filter = "all";
-try { version = localStorage.getItem("udnet-version") || "v2"; if (!VERS[version]) version = "v2"; } catch (e) {}
+let version = "db", filter = "all";
+try { version = localStorage.getItem("udnet-ver") || "db"; if (!VERS[version]) version = "db"; } catch (e) {}
 
 const src = (id, tag) => `img/${id}-${tag}.webp`;
 
@@ -317,7 +319,7 @@ function makeCmp(el, id, eager) {
 
 function setVersion(v) {
   version = v;
-  try { localStorage.setItem("udnet-version", v); } catch (e) {}
+  try { localStorage.setItem("udnet-ver", v); } catch (e) {}
   document.querySelectorAll(".cmp").forEach(el => {
     el.querySelector(".after").src = src(el.dataset.id, v);
     el.querySelector(".tag.r").textContent = VERS[v].label;
