@@ -35,10 +35,14 @@ git clone https://github.com/alzayats/UDnet.git
 cd UDnet
 pip install -r requirements.txt
 
-python Inference.py --input path/to/images --output results/                    # V1
-python Inference.py --input path/to/images --output results/ --model v2         # V2 (preview)
-python Inference.py --input path/to/images --output results/ --model v2 --ai x2 # V2 + AI, 2× upscaled
-python Inference.py --input dive.mp4 --output results/ --model v2               # a video
+# V1, the paper model
+python Inference.py --input path/to/images --output results/
+# V2 (preview)
+python Inference.py --input path/to/images --output results/ --model v2
+# V2 + AI detail, 2× upscaled
+python Inference.py --input path/to/images --output results/ --model v2 --ai x2
+# a video
+python Inference.py --input dive.mp4 --output results/ --model v2
 ```
 
 The weights are downloaded on first run. A GPU is used if available, otherwise the CPU.
@@ -46,13 +50,13 @@ Videos (`.mp4`, `.mov`, `.avi`, `.mkv`, `.m4v`) are enhanced frame by frame and 
 the original frame rate; the audio track is not copied. On an RTX 4090, 1080p video runs at about
 9 frames/s with V1 and 5 frames/s with V2.
 
-| Option | Default | |
+| Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Default | |
 |---|---|---|
 | `--input` | required | an image or video file, or a folder of them |
 | `--output` | `results/` | output folder; file names are kept |
 | `--model` | `v1` | `v1` (paper model) or `v2` (preview) |
-| `--ai` | `none` | `x2` or `x4`: add a Real-ESRGAN detail pass that sharpens and upscales. It can invent fine texture, so use it for viewing, not measurement |
-| `--weights` | `weights/UDnet.pth` | any UDnet checkpoint, including ones from `Train.py` (`weights/UDnet_v2.pth` for V2) |
+| `--ai` | `none` | `x2` or `x4`: Real-ESRGAN detail pass that sharpens and upscales; for viewing, not measurement |
+| `--weights` | auto | a checkpoint, e.g. from `Train.py` or `Train_v2.py`; by default the released weights |
 | `--device` | `auto` | `cpu`, `cuda`, `cuda:1`, ... |
 | `--format` | `png` | image output: `png`, `jpg`, or `same` as the input |
 
@@ -66,8 +70,10 @@ from model_utils.UDnet import load_udnet
 
 model = load_udnet('weights/UDnet.pth', device='cuda')
 img = np.asarray(Image.open('photo.jpg').convert('RGB'), dtype=np.float32) / 255
-out = model.enhance(torch.from_numpy(img).permute(2, 0, 1)[None].cuda())   # (1, 3, H, W) in [0, 1]
-Image.fromarray((out[0].permute(1, 2, 0).cpu().numpy() * 255).round().astype(np.uint8)).save('out.png')
+x = torch.from_numpy(img).permute(2, 0, 1)[None].cuda()  # (1, 3, H, W), 0-1
+out = model.enhance(x)                                    # same shape, 0-1
+out = (out[0].permute(1, 2, 0).cpu().numpy() * 255).round().astype(np.uint8)
+Image.fromarray(out).save('out.png')
 ```
 
 For V2, load it with `from model_utils.UDnet_v2 import load_udnet_v2` and
@@ -98,7 +104,8 @@ reference images (matched by file name, any extension); UIQM and UCIQE are alway
 
 ```bash
 python Inference.py --input EUVP/test_samples/Inp --output results/EUVP
-python evaluate.py  --pred results/EUVP --ref EUVP/test_samples/GTr --csv results/EUVP.csv
+python evaluate.py --pred results/EUVP --ref EUVP/test_samples/GTr \
+    --csv results/EUVP.csv
 ```
 
 Add `--list splits/...txt` to score only the images in a split.
@@ -142,10 +149,15 @@ UFO-120 were not used to train V2 at all. V1 is fully unsupervised (see above).
 UDnet V1 needs only a folder of underwater images. Training targets are generated from each image on the fly.
 
 ```bash
-python Train.py --train_dir path/to/images                                        # from scratch
-python Train.py --train_dir path/to/images --pretrained weights/UDnet.pth --nEpochs 50  # fine-tune
-python Train.py --train_dir path/to/images --resume_train True                    # continue a run
-python Train.py --train_dir UIEB/raw-890 --train_list splits/UIEB/train800.txt    # use a split
+# from scratch
+python Train.py --train_dir path/to/images
+# fine-tune the released model
+python Train.py --train_dir path/to/images --pretrained weights/UDnet.pth \
+    --nEpochs 50
+# continue a run
+python Train.py --train_dir path/to/images --resume_train True
+# use a split
+python Train.py --train_dir UIEB/raw-890 --train_list splits/UIEB/train800.txt
 ```
 
 Checkpoints go to `weights/`: `epoch_last.pth` every 2 epochs and `epoch_<N>.pth` every `--snapshots` epochs.
@@ -162,9 +174,13 @@ V2 is trained on input/reference pairs from [UIEB](https://li-chongyi.github.io/
 
 ```bash
 pip install kornia lpips tensorboard
-python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name my_v2                  # from scratch
-python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name my_v2 --resume         # continue a run
-python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name ft --init weights/UDnet_v2.pth --iters 20000  # fine-tune
+# from scratch
+python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name my_v2
+# continue a run
+python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name my_v2 --resume
+# fine-tune the released model
+python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name ft \
+    --init weights/UDnet_v2.pth --iters 20000
 ```
 
 The loss combines Charbonnier, SSIM, LPIPS and a frequency-domain term; training uses AdamW with
