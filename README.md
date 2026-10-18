@@ -11,16 +11,11 @@ Official code for *Adaptive deep learning framework for robust unsupervised unde
 [![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?logo=PyTorch&logoColor=white)](https://pytorch.org/)
 
 <p align="center">
-  <a href="https://alzayats.github.io/UDnet/"><img src="assets/hero_compare.webp" alt="An underwater sculpture scene: the original photo, then UDnet V1, then UDnet V2" width="100%"></a>
-</p>
-<p align="center"><sub>Original · UDnet V1 (released, fully unsupervised) · UDnet V2 (preview). Image from UIEB.<br>
-<b><a href="https://alzayats.github.io/UDnet/">Open the gallery</a></b> to drag before/after sliders on 24 scenes.</sub></p>
-
-<p align="center">
   <a href="https://alzayats.github.io/UDnet/video/udnet_v2_aimax.mp4"><img src="assets/v2_aimax_split.webp" alt="Split-screen animation over eight underwater scenes: the original photo on the left of a moving divider, UDnet V2 + AI Max on the right" width="100%"></a>
 </p>
 <p align="center"><sub>Left of the divider: original · Right: UDnet V2 + AI Max (experimental, <a href="https://github.com/alzayats/UDnet/tree/ai-max"><code>ai-max</code></a> branch).
-Images from UIEB (C60) and LSUI. <a href="https://alzayats.github.io/UDnet/video/udnet_v2_aimax.mp4">Full-quality MP4</a>.</sub></p>
+Images from UIEB (C60) and LSUI. <a href="https://alzayats.github.io/UDnet/video/udnet_v2_aimax.mp4">Full-quality MP4</a>.<br>
+<b><a href="https://alzayats.github.io/UDnet/">Open the gallery</a></b> to compare the original, V1, V2 and AI Max with before/after sliders on 24 scenes.</sub></p>
 
 ## Models
 
