@@ -2,6 +2,8 @@
 
     python Inference.py --input path/to/images --output results/
     python Inference.py --input photo.jpg
+    python Inference.py --input photo.jpg --model v2            # UDnet V2 (preview)
+    python Inference.py --input photo.jpg --model v2 --ai x2    # V2 + AI detail, 2x upscaled
 """
 import os
 import sys
@@ -12,8 +14,16 @@ import torch
 from PIL import Image
 
 from model_utils.UDnet import load_udnet
+from model_utils.UDnet_v2 import load_udnet_v2
 
-WEIGHTS_URL = 'https://huggingface.co/Alzayats/UDnet/resolve/main/UDnet.pth'
+WEIGHTS = {  # default path -> download URL
+    'v1': ('weights/UDnet.pth', 'https://huggingface.co/Alzayats/UDnet/resolve/main/UDnet.pth'),
+    'v2': ('weights/UDnet_v2.pth', 'https://huggingface.co/Alzayats/UDnet/resolve/main/UDnet_v2.pth'),
+    'x2': ('weights/RealESRGAN_x2plus.pth',
+           'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth'),
+    'x4': ('weights/RealESRGAN_x4plus.pth',
+           'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth'),
+}
 IMG_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff')
 
 
@@ -26,8 +36,15 @@ parser = argparse.ArgumentParser(description='Enhance underwater images with UDn
 parser.add_argument('--input', '--input_dir', dest='input', required=True,
                     help='an image file or a folder of images')
 parser.add_argument('--output', default='./results/', help='folder to write enhanced images to')
-parser.add_argument('--weights', '--model', dest='weights', default='weights/UDnet.pth',
-                    help='path to the pretrained model (downloaded automatically if missing)')
+parser.add_argument('--model', default='v1', choices=['v1', 'v2'],
+                    help="'v1': the paper model (fully unsupervised, fast on a CPU); "
+                         "'v2': preview, trained on paired images (stronger correction, best on a GPU)")
+parser.add_argument('--weights', default=None,
+                    help='path to the pretrained model (default: weights/UDnet.pth or weights/UDnet_v2.pth, '
+                         'downloaded automatically if missing)')
+parser.add_argument('--ai', default='none', choices=['none', 'x2', 'x4'],
+                    help='add a Real-ESRGAN detail pass after UDnet: sharper and upscaled 2x or 4x. '
+                         'It can invent fine texture, so use it for viewing, not measurement')
 parser.add_argument('--device', default='auto', help="'auto', 'cpu', 'cuda', 'cuda:1', ...")
 parser.add_argument('--format', default='png', choices=['png', 'jpg', 'same'],
                     help="output file format; 'same' keeps the input extension (png is lossless)")
@@ -45,15 +62,15 @@ def list_images(path):
     return files
 
 
-def ensure_weights(path):
+def ensure_weights(path, url):
     if os.path.isfile(path):
         return
-    print(f'Weights not found at {path}, downloading from {WEIGHTS_URL} ...')
+    print(f'Weights not found at {path}, downloading from {url} ...')
     os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
     try:
-        torch.hub.download_url_to_file(WEIGHTS_URL, path)
+        torch.hub.download_url_to_file(url, path)
     except Exception as e:
-        sys.exit(f'Download failed ({e}).\nPlease download UDnet.pth manually from {WEIGHTS_URL}\n'
+        sys.exit(f'Download failed ({e}).\nPlease download {os.path.basename(url)} manually from {url}\n'
                  f'and save it as {path}')
 
 
@@ -68,17 +85,27 @@ def pick_device(opt):
 def main():
     opt = parser.parse_args()
     files = list_images(opt.input)
-    ensure_weights(opt.weights)
+    default_path, url = WEIGHTS[opt.model]
+    weights = opt.weights or default_path
+    ensure_weights(weights, url)
     device = pick_device(opt)
-    model = load_udnet(opt.weights, device)
+    model = (load_udnet if opt.model == 'v1' else load_udnet_v2)(weights, device)
+    up = None
+    if opt.ai != 'none':
+        from model_utils.realesrgan import RealESRGAN
+        ensure_weights(*WEIGHTS[opt.ai])
+        up = RealESRGAN(int(opt.ai[1]), WEIGHTS[opt.ai][0]).to(device)
     os.makedirs(opt.output, exist_ok=True)
-    print(f'Enhancing {len(files)} image(s) on {device} -> {opt.output}')
+    print(f'Enhancing {len(files)} image(s) with UDnet {opt.model.upper()}'
+          f'{" + AI " + opt.ai if up else ""} on {device} -> {opt.output}')
 
     for path in files:
         img = np.asarray(Image.open(path).convert('RGB'), dtype=np.float32) / 255.0
         x = torch.from_numpy(img).permute(2, 0, 1).unsqueeze(0).to(device)
         t0 = time.time()
         out = model.enhance(x)
+        if up is not None:
+            out = up(out)
         if device.type == 'cuda':
             torch.cuda.synchronize()
         dt = time.time() - t0
@@ -88,7 +115,7 @@ def main():
         ext = ext if opt.format == 'same' else '.' + opt.format
         save_path = os.path.join(opt.output, stem + ext)
         Image.fromarray(out).save(save_path, **({'quality': 95} if ext.lower() in ('.jpg', '.jpeg') else {}))
-        print(f'  {os.path.basename(path)}  {img.shape[1]}x{img.shape[0]}  {dt:.3f}s')
+        print(f'  {os.path.basename(path)}  {img.shape[1]}x{img.shape[0]} -> {out.shape[1]}x{out.shape[0]}  {dt:.3f}s')
 
 
 if __name__ == '__main__':

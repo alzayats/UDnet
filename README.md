@@ -21,8 +21,8 @@ Official code for *Adaptive deep learning framework for robust unsupervised unde
 | Model | Status | Weights | Speed (256×256) | Notes |
 |:--|:--|:--|:--|:--|
 | **UDnet&nbsp;V1** | Released | [`UDnet.pth`](https://huggingface.co/Alzayats/UDnet)&nbsp;·&nbsp;5.6&nbsp;MB | 457&nbsp;img/s&nbsp;GPU<br>11&nbsp;img/s&nbsp;CPU | Paper model. Fully unsupervised, 1.4 M parameters, runs on a CPU. |
-| **UDnet&nbsp;V2** | Preview | Coming&nbsp;soon | 100&nbsp;img/s&nbsp;GPU | Trained on paired images for stronger correction. See the [gallery](https://alzayats.github.io/UDnet/). |
-| **UDnet&nbsp;V2&nbsp;+&nbsp;AI** | Preview | Coming&nbsp;soon | 38&nbsp;img/s&nbsp;GPU | V2 plus an AI detail pass: sharper, 2× upscaled. Can invent fine texture, so it's for viewing, not measurement. |
+| **UDnet&nbsp;V2** | Preview | [`UDnet_v2.pth`](https://huggingface.co/Alzayats/UDnet)&nbsp;·&nbsp;59&nbsp;MB | 100&nbsp;img/s&nbsp;GPU | Trained on paired images for stronger correction. See the [gallery](https://alzayats.github.io/UDnet/). |
+| **UDnet&nbsp;V2&nbsp;+&nbsp;AI** | Preview | V2 + [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) | 38&nbsp;img/s&nbsp;GPU | V2 plus an AI detail pass: sharper, 2× upscaled. Can invent fine texture, so it's for viewing, not measurement. |
 
 <sub>Speed: one 256×256 image on an RTX 4090 (CPU: 24 threads), model time only.</sub>
 
@@ -35,17 +35,20 @@ git clone https://github.com/alzayats/UDnet.git
 cd UDnet
 pip install -r requirements.txt
 
-python Inference.py --input path/to/images --output results/
+python Inference.py --input path/to/images --output results/                    # V1
+python Inference.py --input path/to/images --output results/ --model v2         # V2 (preview)
+python Inference.py --input path/to/images --output results/ --model v2 --ai x2 # V2 + AI, 2× upscaled
 ```
 
 The weights are downloaded on first run. A GPU is used if available, otherwise the CPU.
-On an RTX 4090, a 1920×1080 image takes about 0.1 s.
 
 | Option | Default | |
 |---|---|---|
 | `--input` | required | an image or a folder of images |
 | `--output` | `results/` | output folder; file names are kept |
-| `--weights` | `weights/UDnet.pth` | any UDnet checkpoint, including ones from `Train.py` |
+| `--model` | `v1` | `v1` (paper model) or `v2` (preview) |
+| `--ai` | `none` | `x2` or `x4`: add a Real-ESRGAN detail pass that sharpens and upscales. It can invent fine texture, so use it for viewing, not measurement |
+| `--weights` | `weights/UDnet.pth` | any UDnet checkpoint, including ones from `Train.py` (`weights/UDnet_v2.pth` for V2) |
 | `--device` | `auto` | `cpu`, `cuda`, `cuda:1`, ... |
 | `--format` | `png` | `png`, `jpg`, or `same` as the input |
 
@@ -62,6 +65,9 @@ img = np.asarray(Image.open('photo.jpg').convert('RGB'), dtype=np.float32) / 255
 out = model.enhance(torch.from_numpy(img).permute(2, 0, 1)[None].cuda())   # (1, 3, H, W) in [0, 1]
 Image.fromarray((out[0].permute(1, 2, 0).cpu().numpy() * 255).round().astype(np.uint8)).save('out.png')
 ```
+
+For V2, load it with `from model_utils.UDnet_v2 import load_udnet_v2` and
+`model = load_udnet_v2('weights/UDnet_v2.pth', device='cuda')`; `model.enhance` works the same way.
 
 </details>
 
@@ -175,3 +181,6 @@ MIT license; intended for academic research. UDnet builds on
 [USLN](https://github.com/deepxzy/USLN) and
 [PyTorch-Underwater-Image-Enhancement](https://github.com/xueleichen/PyTorch-Underwater-Image-Enhancement).
 The UIQM code is adapted from [FUnIE-GAN](https://github.com/xahidbuffon/FUnIE-GAN).
+UDnet V2 is built on the [NAFNet](https://github.com/megvii-research/NAFNet) architecture, and the
+`--ai` pass uses the official [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) weights (BSD-3-Clause),
+downloaded from their releases.
