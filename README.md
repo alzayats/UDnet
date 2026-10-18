@@ -38,19 +38,23 @@ pip install -r requirements.txt
 python Inference.py --input path/to/images --output results/                    # V1
 python Inference.py --input path/to/images --output results/ --model v2         # V2 (preview)
 python Inference.py --input path/to/images --output results/ --model v2 --ai x2 # V2 + AI, 2× upscaled
+python Inference.py --input dive.mp4 --output results/ --model v2               # a video
 ```
 
 The weights are downloaded on first run. A GPU is used if available, otherwise the CPU.
+Videos (`.mp4`, `.mov`, `.avi`, `.mkv`, `.m4v`) are enhanced frame by frame and written as `.mp4` at
+the original frame rate; the audio track is not copied. On an RTX 4090, 1080p video runs at about
+9 frames/s with V1 and 5 frames/s with V2.
 
 | Option | Default | |
 |---|---|---|
-| `--input` | required | an image or a folder of images |
+| `--input` | required | an image or video file, or a folder of them |
 | `--output` | `results/` | output folder; file names are kept |
 | `--model` | `v1` | `v1` (paper model) or `v2` (preview) |
 | `--ai` | `none` | `x2` or `x4`: add a Real-ESRGAN detail pass that sharpens and upscales. It can invent fine texture, so use it for viewing, not measurement |
 | `--weights` | `weights/UDnet.pth` | any UDnet checkpoint, including ones from `Train.py` (`weights/UDnet_v2.pth` for V2) |
 | `--device` | `auto` | `cpu`, `cuda`, `cuda:1`, ... |
-| `--format` | `png` | `png`, `jpg`, or `same` as the input |
+| `--format` | `png` | image output: `png`, `jpg`, or `same` as the input |
 
 <details>
 <summary><b>Use it from Python</b></summary>
@@ -115,14 +119,27 @@ other implementations are not directly comparable. For UFO-120 the output is ups
 UDnet v1 is fully unsupervised: it never sees a reference image during training, so it is not
 trying to reproduce the reference style that PSNR and SSIM reward. UIQM and UCIQE need no reference.
 
+**UDnet V1 and V2 on full held-out test sets** (PSNR ↑ / SSIM ↑ at reference resolution):
+
+| Test set | Images | V1 | V2 (preview) |
+|---|---|---|---|
+| UIEB [`UIEB/test90`](splits/UIEB/test90.txt) | 90 | 19.86 / 0.842 | 22.86 / 0.909 |
+| LSUI [`V2/LSUI_test400`](splits/V2/LSUI_test400.txt) | 400 | 19.64 / 0.807 | 28.07 / 0.910 |
+| EUVP `test_samples` | 515 | 19.59 / 0.783 | 25.93 / 0.874 |
+| UFO-120 `TEST` | 120 | 18.53 / 0.628 | 24.71 / 0.734 |
+
+V2 is trained on paired images from UIEB and LSUI, which is what these reference-based scores
+reward; none of these test images, or near-duplicates of them, were used for training. EUVP and
+UFO-120 were not used to train V2 at all. V1 is fully unsupervised (see above).
+
 </details>
 
 ## Train
 
 <details>
-<summary><b>Train or fine-tune on your own images</b></summary>
+<summary><b>Train or fine-tune V1 on your own images</b></summary>
 
-UDnet needs only a folder of underwater images. Training targets are generated from each image on the fly.
+UDnet V1 needs only a folder of underwater images. Training targets are generated from each image on the fly.
 
 ```bash
 python Train.py --train_dir path/to/images                                        # from scratch
@@ -133,6 +150,27 @@ python Train.py --train_dir UIEB/raw-890 --train_list splits/UIEB/train800.txt  
 
 Checkpoints go to `weights/`: `epoch_last.pth` every 2 epochs and `epoch_<N>.pth` every `--snapshots` epochs.
 See `python Train.py -h` for all options.
+
+</details>
+
+<details>
+<summary><b>Train or fine-tune V2 on paired images</b></summary>
+
+V2 is trained on input/reference pairs from [UIEB](https://li-chongyi.github.io/proj_benchmark.html)
+(`raw-890`, `reference-890`) and [LSUI](https://lintaopeng.github.io/_pages/UIE%20Project%20Page.html)
+(`input`, `GT`), using the lists in [`splits/V2`](splits/V2). It needs a CUDA GPU and a few extra packages.
+
+```bash
+pip install kornia lpips tensorboard
+python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name my_v2                  # from scratch
+python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name my_v2 --resume         # continue a run
+python Train_v2.py --uieb path/to/UIEB --lsui path/to/LSUI --name ft --init weights/UDnet_v2.pth --iters 20000  # fine-tune
+```
+
+The loss combines Charbonnier, SSIM, LPIPS and a frequency-domain term; training uses AdamW with
+warm-up and cosine decay, bfloat16 mixed precision and an EMA of the weights. The released
+`UDnet_v2.pth` is the EMA model at 80k of the default 100k iterations (the full run takes about 5 hours on an RTX 4090).
+Checkpoints go to `weights/v2_runs/<name>/`; use one with `Inference.py --model v2 --weights weights/v2_runs/<name>/best.pth`.
 
 </details>
 
@@ -154,6 +192,8 @@ Each file in [`splits/`](splits) lists image names, one per line.
 | `paper_test/DeepFish.txt` | 50 | [DeepFish](https://alzayats.github.io/DeepFish/) |
 | `paper_test/FishID.txt` | 50 | FishID |
 | `UIEB/train800.txt`, `UIEB/test90.txt` | 800 / 90 | UIEB `raw-890`, fixed random split (seed 0) |
+| `V2/UIEB_train.txt` | 738 | V2 training images: `UIEB/train800.txt` without near-duplicates of any test image |
+| `V2/LSUI_train.txt`, `V2/LSUI_test400.txt` | 3160 / 400 | [LSUI](https://lintaopeng.github.io/_pages/UIE%20Project%20Page.html); test images chosen by near-duplicate group, training images near-duplicate-free |
 
 </details>
 

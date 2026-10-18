@@ -65,6 +65,8 @@ class GlobalColour(nn.Module):
             nn.Conv2d(width, width * 2, 3, 2, 1), nn.GELU(),
             nn.Conv2d(width * 2, width * 4, 3, 2, 1), nn.GELU(),
             nn.AdaptiveAvgPool2d(1), nn.Flatten(), nn.Linear(width * 4, 12))
+        nn.init.zeros_(self.net[-1].weight)  # start as the identity colour transform
+        nn.init.zeros_(self.net[-1].bias)
 
     def forward(self, x):
         p = self.net(F.interpolate(x, size=(128, 128), mode='bilinear', align_corners=False))

@@ -160,3 +160,6 @@ dmypy.json
 
 # UDnet outputs
 results/
+
+# UDnet V2 training runs
+weights/v2_runs/
