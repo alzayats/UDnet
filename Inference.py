@@ -2,7 +2,7 @@
 
     python Inference.py --input path/to/images --output results/
     python Inference.py --input photo.jpg
-    python Inference.py --input photo.jpg --model v2            # UDnet V2 (preview)
+    python Inference.py --input photo.jpg --model v2            # UDnet V2
     python Inference.py --input photo.jpg --model v2 --ai x2    # V2 + AI detail, 2x upscaled
     python Inference.py --input dive.mp4 --model v2             # videos too (written as .mp4, no audio)
 """
@@ -41,7 +41,7 @@ parser.add_argument('--input', '--input_dir', dest='input', required=True,
 parser.add_argument('--output', default='./results/', help='folder to write enhanced images to')
 parser.add_argument('--model', default='v1', choices=['v1', 'v2'],
                     help="'v1': the paper model (fully unsupervised, fast on a CPU); "
-                         "'v2': preview, trained on paired images (stronger correction, best on a GPU)")
+                         "'v2': trained on paired images (stronger correction, best on a GPU)")
 parser.add_argument('--weights', default=None,
                     help='path to the pretrained model (default: weights/UDnet.pth or weights/UDnet_v2.pth, '
                          'downloaded automatically if missing)')

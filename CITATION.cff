@@ -5,6 +5,8 @@ type: software
 license: MIT
 repository-code: "https://github.com/alzayats/UDnet"
 url: "https://alzayats.github.io/UDnet/"
+version: "2.0"
+date-released: 2026-10-19
 authors:
   - family-names: Saleh
     given-names: Alzayat

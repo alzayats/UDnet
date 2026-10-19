@@ -7,8 +7,8 @@
 and test lists are in splits/V2 (UIEB test: splits/UIEB/test90.txt). Training images that are
 near-duplicates of any test image were removed from these lists.
 
-The released UDnet_v2.pth is the EMA model at 80k of 100k iterations with the default settings
-(the full run takes about 5 hours on one RTX 4090). Checkpoints go to weights/v2_runs/<name>/; best.pth can be used
+The released UDnet_v2.pth is the EMA model at 75k of 100k iterations with the default settings
+(the full run takes about 6 hours on one RTX 4090). Checkpoints go to weights/v2_runs/<name>/; best.pth can be used
 directly with `Inference.py --model v2 --weights weights/v2_runs/<name>/best.pth`.
 """
 import os
@@ -39,11 +39,10 @@ parser.add_argument('--bs', type=int, default=8)
 parser.add_argument('--crop', type=int, default=256)
 parser.add_argument('--lr', type=float, default=4e-4)
 parser.add_argument('--warm', type=int, default=2000, help='linear warm-up iterations')
-parser.add_argument('--width', type=int, default=32)
-parser.add_argument('--middle', type=int, default=12)
 parser.add_argument('--w_ssim', type=float, default=0.2)
 parser.add_argument('--w_lpips', type=float, default=0.1)
 parser.add_argument('--w_fft', type=float, default=0.05)
+parser.add_argument('--w_kl', type=float, default=1.0, help='KL weight between the posterior and prior latent codes')
 parser.add_argument('--ema', type=float, default=0.999)
 parser.add_argument('--val_every', type=int, default=5000)
 parser.add_argument('--workers', type=int, default=8)
@@ -175,7 +174,7 @@ def main():
     tests = {name: [(os.path.join(inp, n), os.path.join(ref, n)) for n in read_list(lst)]
              for name, (inp, ref), lst in (('UIEB', uieb, 'UIEB/test90.txt'), ('LSUI', lsui, 'V2/LSUI_test400.txt'))}
 
-    model = UDnetV2(width=opt.width, middle_blocks=opt.middle).to(dev)
+    model = UDnetV2().to(dev)
     ema = copy.deepcopy(model).eval()
     for q in ema.parameters():
         q.requires_grad = False
@@ -214,8 +213,10 @@ def main():
             break
         x, y = x.to(dev, non_blocking=True), y.to(dev, non_blocking=True)
         with torch.autocast('cuda', dtype=torch.bfloat16):
-            out = model(x)
+            out, kl = model.train_step(x, y)   # the posterior sees the reference; inference uses the prior
         loss, terms = crit(out.float(), y)
+        loss = loss + opt.w_kl * kl.float()
+        terms['kl'] = kl.item()
         optim.zero_grad(set_to_none=True)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
@@ -240,7 +241,7 @@ def main():
                 tb.add_scalar(f'val/{n}_psnr', p_, it)
                 tb.add_scalar(f'val/{n}_ssim', s_, it)
             print(f'VAL it {it}: ' + ' '.join(f'{n} {a:.2f}/{b:.4f}' for n, (a, b) in r.items()), flush=True)
-            config = {'width': opt.width, 'middle': opt.middle}
+            config = {'arch': 'udnet'}
             score = r['UIEB'][0] + r['LSUI'][0]
             if score > best:
                 best = score
