@@ -217,10 +217,10 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
           <ul><li>5.6 MB of weights, runs on a laptop CPU</li><li>Gentle, conservative correction</li><li>Weights auto-download on first run</li></ul>
         </div>
         <div class="ver main">
-          <span class="state">Preview · in the repo</span>
+          <span class="state">Released · v2.0</span>
           <h3>UDnet V2</h3>
-          <p>Trained on thousands of paired images with a modern restoration network. Much stronger colour and haze correction while staying faithful to the scene.</p>
-          <ul><li>Best accuracy against reference images</li><li>Needs a GPU for large images</li><li>Same command, add <code style="white-space:nowrap">--model v2</code></li></ul>
+          <p>The UDnet design, modernised with current network blocks and trained on thousands of paired images. Much stronger colour and haze correction while staying faithful to the scene.</p>
+          <ul><li>Best accuracy against reference images</li><li>26 MB of weights, 12.8 M parameters</li><li>Needs a GPU for large images</li><li>Same command, add <code style="white-space:nowrap">--model v2</code></li></ul>
         </div>
         <div class="ver">
           <span class="state">Preview · optional</span>
@@ -240,15 +240,15 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
     <section aria-labelledby="nums">
       <p class="eyebrow">Measured</p>
       <h2 id="nums">Scores on held-out test images</h2>
-      <p class="lede">PSNR (dB) and SSIM measure how close an output is to each test set's reference image; higher is better. V1 is fully unsupervised and never saw a reference image, so it is not trying to match them. V2 was trained on paired images, which is what these scores reward. V2 figures are from the current preview model.</p>
+      <p class="lede">PSNR (dB) and SSIM measure how close an output is to each test set's reference image; higher is better. V1 is fully unsupervised and never saw a reference image, so it is not trying to match them. V2 was trained on paired images, which is what these scores reward. V2 figures are from the released v2.0 model.</p>
       <div class="tbl-wrap">
         <table>
           <thead><tr><th>Test set</th><th>Images</th><th>V1 PSNR</th><th>V2 PSNR</th><th>V1 SSIM</th><th>V2 SSIM</th></tr></thead>
           <tbody>
-            <tr><td>UIEB test split</td><td>90</td><td>19.86</td><td class="up">22.86</td><td>0.842</td><td class="up">0.909</td></tr>
-            <tr><td>LSUI test split</td><td>400</td><td>19.64</td><td class="up">28.07</td><td>0.807</td><td class="up">0.910</td></tr>
-            <tr><td>EUVP test samples</td><td>515</td><td>19.59</td><td class="up">25.93</td><td>0.783</td><td class="up">0.874</td></tr>
-            <tr><td>UFO-120 test</td><td>120</td><td>18.53</td><td class="up">24.71</td><td>0.628</td><td class="up">0.734</td></tr>
+            <tr><td>UIEB test split</td><td>90</td><td>19.86</td><td class="up">22.65</td><td>0.842</td><td class="up">0.906</td></tr>
+            <tr><td>LSUI test split</td><td>400</td><td>19.64</td><td class="up">27.62</td><td>0.807</td><td class="up">0.907</td></tr>
+            <tr><td>EUVP test samples</td><td>515</td><td>19.59</td><td class="up">25.42</td><td>0.783</td><td class="up">0.867</td></tr>
+            <tr><td>UFO-120 test</td><td>120</td><td>18.53</td><td class="up">24.75</td><td>0.628</td><td class="up">0.732</td></tr>
           </tbody>
         </table>
       </div>
@@ -293,7 +293,7 @@ const ITEMS = [["c60-15603","green","C60","15603"],["c60-5","green","C60","5"],[
 const CATS = { all: "All", green: "Green water", blue: "Blue water", low: "Low light", reef: "Reef life", wreck: "Wrecks & divers" };
 const SETS = { T90: "UIEB", C60: "UIEB Challenging", L400: "LSUI", RUIE: "RUIE" };
 const VERS = {
-  v2: { label: "UDnet V2", note: "V2 preview: trained on paired images, strongest faithful correction." },
+  v2: { label: "UDnet V2", note: "V2: the UDnet design modernised and trained on paired images, strongest faithful correction." },
   v1: { label: "UDnet V1", note: "V1: the released model from our ESWA 2025 paper. Fully unsupervised: it learned without a single reference image." },
   ai: { label: "V2 + AI", note: "V2 + AI detail: sharper and 2× upscaled. Fine texture may be invented, so use it for viewing, not measurement." },
   db: { label: "V2 + AI Max", note: "V2 + AI Max: a diffusion model adds fine natural detail, 2× upscaled. Slow, and texture may be invented, so use it for viewing, not measurement." }
