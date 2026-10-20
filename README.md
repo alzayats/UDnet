@@ -145,6 +145,8 @@ before UDnet V2) trained with exactly the same data, loss and schedule. UDnet V2
 PSNR of it and ties on LPIPS and on the no-reference scores (MUSIQ, CLIP-IQA, URanker, UIQM, UCIQE),
 with 2.7× fewer parameters at inference (10.9 M vs 29.3 M) and about 1.9× the speed. Its weights are kept
 as [`UDnet_v2_preview.pth`](https://huggingface.co/Alzayats/UDnet) and load with the same `load_udnet_v2`.
+If you use the older `v2.0-preview` tag of this repository, download that file and pass it with
+`--weights weights/UDnet_v2_preview.pth`, because that code expects the preview model.
 
 </details>
 
