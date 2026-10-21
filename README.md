@@ -133,24 +133,10 @@ other implementations are not directly comparable. For UFO-120 the output is ups
 UDnet v1 is fully unsupervised: it never sees a reference image during training, so it is not
 trying to reproduce the reference style that PSNR and SSIM reward. UIQM and UCIQE need no reference.
 
-**UDnet V1 and V2 on full held-out test sets** (PSNR ↑ / SSIM ↑ at reference resolution):
-
-| Test set | Images | V1 | V2 | NAFNet (29 M), same training |
-|---|---|---|---|---|
-| UIEB [`UIEB/test90`](splits/UIEB/test90.txt) | 90 | 19.86 / 0.842 | 22.65 / 0.906 | 22.86 / 0.909 |
-| LSUI [`V2/LSUI_test400`](splits/V2/LSUI_test400.txt) | 400 | 19.64 / 0.807 | 27.62 / 0.907 | 28.07 / 0.910 |
-| EUVP `test_samples` | 515 | 19.59 / 0.783 | 25.42 / 0.867 | 25.93 / 0.874 |
-| UFO-120 `TEST` | 120 | 18.53 / 0.628 | 24.75 / 0.732 | 24.71 / 0.734 |
-
-V2 is trained on paired images from UIEB and LSUI, which is what these reference-based scores
-reward; none of these test images, or near-duplicates of them, were used for training. EUVP and
-UFO-120 were not used to train V2 at all. V1 is fully unsupervised (see above).
-
-The last column is a [NAFNet](https://github.com/megvii-research/NAFNet) U-Net (the V2 preview released
-before UDnet V2) trained with exactly the same data, loss and schedule. UDnet V2 comes within 0.2–0.5 dB
-PSNR of it and ties on LPIPS and on the no-reference scores (MUSIQ, CLIP-IQA, URanker, UIQM, UCIQE),
-with 2.7× fewer parameters at inference (10.9 M vs 29.3 M) and about 1.9× the speed. Its weights are kept
-as [`UDnet_v2_preview.pth`](https://huggingface.co/Alzayats/UDnet) and load with the same `load_udnet_v2`.
+The NAFNet model released as the V2 preview before UDnet V2 is kept
+as [`UDnet_v2_preview.pth`](https://huggingface.co/Alzayats/UDnet) and loads with the same `load_udnet_v2`.
+If you use the older `v2.0-preview` tag of this repository, download that file and pass it with
+`--weights weights/UDnet_v2_preview.pth`, because that code expects the preview model.
 
 </details>
 
