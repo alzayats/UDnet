@@ -237,23 +237,6 @@ footer { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
       </div>
     </section>
 
-    <section aria-labelledby="nums">
-      <p class="eyebrow">Measured</p>
-      <h2 id="nums">Scores on held-out test images</h2>
-      <p class="lede">PSNR (dB) and SSIM measure how close an output is to each test set's reference image; higher is better. V1 is fully unsupervised and never saw a reference image, so it is not trying to match them. V2 was trained on paired images, which is what these scores reward. V2 figures are from the released v2.0 model.</p>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Test set</th><th>Images</th><th>V1 PSNR</th><th>V2 PSNR</th><th>V1 SSIM</th><th>V2 SSIM</th></tr></thead>
-          <tbody>
-            <tr><td>UIEB test split</td><td>90</td><td>19.86</td><td class="up">22.65</td><td>0.842</td><td class="up">0.906</td></tr>
-            <tr><td>LSUI test split</td><td>400</td><td>19.64</td><td class="up">27.62</td><td>0.807</td><td class="up">0.907</td></tr>
-            <tr><td>EUVP test samples</td><td>515</td><td>19.59</td><td class="up">25.42</td><td>0.783</td><td class="up">0.867</td></tr>
-            <tr><td>UFO-120 test</td><td>120</td><td>18.53</td><td class="up">24.75</td><td>0.628</td><td class="up">0.732</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
     <section id="use" aria-labelledby="usehd">
       <p class="eyebrow">Use it</p>
       <h2 id="usehd">Enhance a folder in one command</h2>
