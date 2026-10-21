@@ -117,19 +117,6 @@ python evaluate.py --pred results/EUVP --ref EUVP/test_samples/GTr \
 
 Add `--list splits/...txt` to score only the images in a split.
 
-**UDnet v1 on the test sets in [`splits/paper_test`](splits/paper_test)** (50 images each):
-
-| | UIEB | UFO-120 | EUVP | RUIE | Fish-DETRAC | SUIM | DeepFish | FishID |
-|---|---|---|---|---|---|---|---|---|
-| PSNR ↑ | 18.68 | 18.64 | 19.78 | – | – | – | – | – |
-| SSIM ↑ | 0.771 | 0.621 | 0.775 | – | – | – | – | – |
-| UIQM ↑ | 2.81 | 3.07 | 3.17 | 2.89 | 2.90 | 2.54 | 2.67 | 1.55 |
-| UCIQE ↑ | 0.706 | 0.726 | 0.746 | 0.599 | 0.632 | 0.665 | 0.589 | 0.580 |
-
-UIQM follows the FUnIE-GAN implementation and UCIQE the common OpenCV-Lab version; values from
-other implementations are not directly comparable. For UFO-120 the output is upsampled to the
-640×480 reference before PSNR/SSIM.
-
 UDnet v1 is fully unsupervised: it never sees a reference image during training, so it is not
 trying to reproduce the reference style that PSNR and SSIM reward. UIQM and UCIQE need no reference.
 
